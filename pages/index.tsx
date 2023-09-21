@@ -19,10 +19,13 @@ export default function Page({
   files,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <ul>
-      {files.map((file) => (
-        <File path={file} key={crypto.randomUUID()} />
-      ))}
-    </ul>
+    <>
+      <div>Howdy!</div>
+      <ul>
+        {files.map((file) => (
+          <File path={file} key={crypto.randomUUID()} />
+        ))}
+      </ul>
+    </>
   );
 }
