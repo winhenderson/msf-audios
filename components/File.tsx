@@ -1,5 +1,4 @@
 import { DateString } from "@/pages";
-import axios from "axios";
 import React from "react";
 
 type Props = {
@@ -44,21 +43,15 @@ export default File;
 
 function download(path: string) {
   const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${path}`;
-  axios({
-    url: url,
-    method: "GET",
-    responseType: "blob",
-  }).then((response) => {
-    const blob = new Blob([response.data], {
-      type: response.data.type,
-    });
+  fetch(url).then(async (response) => {
+    const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    const contentDisposition = response.headers["content-disposition"];
+    const contentDisposition = response.headers.get("content-disposition");
     let fileName = path;
     if (contentDisposition) {
-      const fileNameMatch = contentDisposition.match(/filename="(.+)"/);
+      const fileNameMatch = contentDisposition.match(/filename="(.+)"/) ?? [];
       if (fileNameMatch.length === 2) fileName = fileNameMatch[1];
     }
     link.setAttribute("download", fileName);

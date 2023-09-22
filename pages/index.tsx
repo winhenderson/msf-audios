@@ -21,20 +21,15 @@ export const getServerSideProps = (async (context) => {
     promisedData.push(cloud.metaData(file));
   }
   const data = await Promise.all(promisedData);
-  console.log("filenames", fileNames.length);
   const usefulInfo = [];
   for (let i = 0; i < fileNames.length; i++) {
-    console.log("in here!");
-    let foo = {
+    usefulInfo.push({
       fileName: fileNames[i],
       lastModified:
         data[i].LastModified?.toISOString() ?? new Date().toISOString(),
       size: data[i].ContentLength ?? 0,
-    };
-    console.log("foo:", foo);
-    usefulInfo.push(foo);
+    });
   }
-  console.log(":::", usefulInfo);
   return { props: { usefulInfo } };
 }) satisfies GetServerSideProps<Props>;
 
@@ -47,7 +42,6 @@ export const getServerSideProps = (async (context) => {
 export function Page({
   usefulInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  console.info({ usefulInfo });
   return (
     <>
       <ul className="flex flex-col w-3/4">
