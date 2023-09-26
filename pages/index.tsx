@@ -6,22 +6,24 @@ import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowDown, faPodcast } from "@fortawesome/free-solid-svg-icons";
+import { podcastXML } from "@/lib/podcast";
+import fs from "node:fs";
+import Link from "next/link";
 
-export type metaData = ReturnType<typeof cloud.metaData>;
+export type MetaData = ReturnType<typeof cloud.metaData>;
 
 export type DateString = string;
+export type UsefulInfo = Array<{
+  fileName: string;
+  lastModified: DateString;
+  size: number;
+}>;
 
-type Props = {
-  usefulInfo: Array<{
-    fileName: string;
-    lastModified: DateString;
-    size: number;
-  }>;
-};
+type Props = { usefulInfo: UsefulInfo };
 
 export const getServerSideProps = (async (context) => {
   const fileNames = await cloud.listObjects("");
-  const promisedData: metaData[] = [];
+  const promisedData: MetaData[] = [];
   for (const file of fileNames) {
     promisedData.push(cloud.metaData(file));
   }
@@ -59,17 +61,23 @@ export function Page({
           Download All
           <FontAwesomeIcon icon={faCloudArrowDown} className="ml-2" />
         </Button>
-        <Button onClick={() => {}} className="mt-2">
+        {/* <Button onClick={() => } className="mt-2">
           Podcast
           <FontAwesomeIcon icon={faPodcast} className="ml-2" />
-        </Button>
+        </Button> */}
+        <Link
+          href="./podcast.rss"
+          className="w-full bg-teal-900 text-white text-center"
+        >
+          Podcast
+        </Link>
       </div>
     </div>
   );
 }
 export default Page;
 
-async function downloadAll(usefulInfo: Props["usefulInfo"]) {
+async function downloadAll(usefulInfo: UsefulInfo) {
   const zip = new JSZip();
   for (const { fileName } of usefulInfo) {
     const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`;

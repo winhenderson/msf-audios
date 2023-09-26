@@ -12,24 +12,7 @@ type Props = {
 };
 
 const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
-  const shortenedFileName = fileName.replace(".mp3", "");
-  const underscoredFileName = shortenedFileName
-    .split("")
-    .map((letter) => (letter === " " ? "_" : letter))
-    .join("");
-  const splitFileName = underscoredFileName.split("_");
-  const createdDateDigits = splitFileName.splice(0, 1)[0].split("");
-  const createdDate = {
-    year: createdDateDigits.splice(0, 2).join(""),
-    month: Number(createdDateDigits.splice(0, 2).join("")).toFixed(0),
-    day: createdDateDigits.splice(0, 2).join(""),
-  };
-  const audioName = splitFileName.join(" ");
-
-  // hacky, assumes that the bitrate won't ever change
-  const totalSeconds = (size * 8) / 56000;
-  const seconds = (totalSeconds % 60).toFixed(0);
-  const minutes = Math.floor(totalSeconds / 60);
+  const info = getData(fileName, size);
 
   return (
     <li
@@ -47,9 +30,9 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
       </div>
 
       <div className="min-w-0 flex-auto">
-        <p className="text-md font-semibold leading-6">{audioName}</p>
+        <p className="text-md font-semibold leading-6">{info.cleanName}</p>
         <p className="mt-1 text-xs leading-5 text-gray-500">
-          {`${createdDate.month}/${createdDate.day}/20${createdDate.year}`}
+          {`${info.month}/${info.day}/20${info.year}`}
         </p>
       </div>
 
@@ -59,8 +42,8 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
       </div>
 
       <div className="text-gray-600 font-bold text-xs grid grid-rows-2 mr-4 text-right place-content-center">
-        <span>{(size / 1000000).toFixed(1)} MB</span>
-        <span>{`${minutes}:${seconds}`}</span>
+        <span>{(info.size / 1000000).toFixed(1)} MB</span>
+        <span>{info.durationString}</span>
       </div>
 
       <Button onClick={() => download(fileName)} small>
@@ -91,4 +74,52 @@ function download(path: string) {
     link.remove();
     window.URL.revokeObjectURL(url);
   });
+}
+
+export function getData(
+  fileName: string,
+  fileSize: number
+): {
+  cleanName: string;
+  size: number;
+  lengthInSeconds: number;
+  durationString: string;
+  createdDate: Date;
+  year: number;
+  month: number;
+  day: number;
+} {
+  const shortenedFileName = fileName.replace(".mp3", "");
+  const underscoredFileName = shortenedFileName
+    .split("")
+    .map((letter) => (letter === " " ? "_" : letter))
+    .join("");
+  const splitFileName = underscoredFileName.split("_");
+  const createdDateDigits = splitFileName.splice(0, 1)[0].split("");
+  const createdDate = {
+    year: Number(createdDateDigits.splice(0, 2).join("")),
+    month: Number(Number(createdDateDigits.splice(0, 2).join("")).toFixed(0)),
+    day: Number(createdDateDigits.splice(0, 2).join("")),
+  };
+  const audioName = splitFileName.join(" ");
+
+  // hacky, assumes that the bitrate won't ever change
+  const totalSeconds = (fileSize * 8) / 56000;
+  const seconds = (totalSeconds % 60).toFixed(0);
+  const minutes = Math.floor(totalSeconds / 60);
+
+  return {
+    cleanName: audioName,
+    size: fileSize,
+    lengthInSeconds: totalSeconds,
+    createdDate: new Date(
+      createdDate.year,
+      createdDate.month - 1,
+      createdDate.day
+    ),
+    year: createdDate.year,
+    month: createdDate.month,
+    day: createdDate.day,
+    durationString: `${minutes}:${seconds}`,
+  };
 }
