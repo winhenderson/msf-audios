@@ -1,6 +1,6 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import * as cloud from "@friends-library/cloud";
-import File from "@/components/File";
+import FileList from "@/components/FileList";
 
 export type metaData = ReturnType<typeof cloud.metaData>;
 
@@ -30,6 +30,7 @@ export const getServerSideProps = (async (context) => {
       size: data[i].ContentLength ?? 0,
     });
   }
+  usefulInfo.reverse();
   return { props: { usefulInfo } };
 }) satisfies GetServerSideProps<Props>;
 
@@ -43,25 +44,12 @@ export function Page({
   usefulInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <>
-      <ul className="flex flex-col w-3/4">
-        <li className="flex  h-14 justify-between items-center mb-2 border-b-gray-400 border-b-2 border-b-solid px-4 text-lg">
-          <span>Name</span>
-          <div className="flex justify-around basis-1/3">
-            <span className="-ml-6">Last Modified</span>
-            <span className="-ml-1">Size</span>
-          </div>
-        </li>
-        {usefulInfo.map((info) => (
-          <File
-            path={info.fileName}
-            key={crypto.randomUUID()}
-            lastModified={info.lastModified}
-            size={info.size}
-          />
-        ))}
-      </ul>
-    </>
+    <div className="px-2 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto">
+      <h1 className="w-full text-4xl text-teal-950 text-center border-b-teal-700 border-b font-bold pb-2 pt-4 mb-2">
+        Sunday Teachings
+      </h1>
+      <FileList usefulInfo={usefulInfo} />
+    </div>
   );
 }
 export default Page;
