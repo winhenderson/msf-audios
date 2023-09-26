@@ -2,6 +2,8 @@ import { DateString } from "@/pages";
 import Image from "next/image";
 import React from "react";
 import Button from "./Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   fileName: string;
@@ -31,7 +33,7 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
 
   return (
     <li
-      className="flex py-4 hover:text-teal-600 text-teal-950 hover:bg-teal-50 hover:transition-colors"
+      className="flex py-4 px-2 hover:text-teal-600 text-teal-950 hover:bg-teal-50 hover:transition-colors"
       onClick={() => download(fileName)}
     >
       <div className="flex min-w-0 gap-x-4">
@@ -43,29 +45,27 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
           className=" flex-none rounded-full mr-2"
         />
       </div>
+
       <div className="min-w-0 flex-auto">
         <p className="text-md font-semibold leading-6">{audioName}</p>
         <p className="mt-1 text-xs leading-5 text-gray-500">
           {`${createdDate.month}/${createdDate.day}/20${createdDate.year}`}
         </p>
       </div>
-      {/* <div className="basis-1/4 mr-2 hidden sm:flex">
-        <Button onClick={() => download(fileName)} />
-      </div> */}
-      {/* <button
-        onClick={(e) => {
-          e.preventDefault();
-          download(path);
-        }}
-      >
-        {path}
-      </button>
-      {/* <div className="text-gray-500 flex justify-around basis-1/3"> */}
-      <div className="text-gray-500 text-xs grid grid-rows-3 mr-2 text-right">
+
+      <div className="text-gray-500 text-[10px] grid grid-rows-2 mr-4 place-content-center uppercase tracking-wide">
+        <span>Size:</span>
+        <span>Length:</span>
+      </div>
+
+      <div className="text-gray-600 font-bold text-xs grid grid-rows-2 mr-4 text-right place-content-center">
         <span>{(size / 1000000).toFixed(1)} MB</span>
-        {/* <span>{(size * 8) / 56000 / 60}</span> */}
         <span>{`${minutes}:${seconds}`}</span>
       </div>
+
+      <Button onClick={() => download(fileName)} small>
+        <FontAwesomeIcon icon={faCloudArrowDown} />
+      </Button>
     </li>
   );
 };
