@@ -1,21 +1,21 @@
 import React from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 type Props = {
   onClick(): void;
+  children: React.ReactNode;
+  className?: string;
 };
 
-const Button: React.FC<Props> = ({ onClick }) => {
+const Button: React.FC<Props> = ({ onClick, children, className }) => {
   return (
     <button
-      className="w-32 h-12 bg-gradient-to-br from-gray-100 to-gray-300 rounded-lg flex items-center justify-center border border-gray-300"
+      className={`w-full h-12 bg-gradient-to-br text-gray-50 from-teal-700 to-teal-950 rounded-lg flex items-center justify-center uppercase font-bold ${className}`}
       onClick={(e) => {
         e.preventDefault();
         onClick();
       }}
     >
-      <FontAwesomeIcon icon={faCloudArrowDown} />
+      {children}
     </button>
   );
 };

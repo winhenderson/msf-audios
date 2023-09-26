@@ -1,6 +1,11 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import * as cloud from "@friends-library/cloud";
 import FileList from "@/components/FileList";
+import Button from "@/components/Button";
+import { saveAs } from "file-saver";
+import JSZip from "jszip";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 
 export type metaData = ReturnType<typeof cloud.metaData>;
 
@@ -44,12 +49,26 @@ export function Page({
   usefulInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   return (
-    <div className="px-2 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto">
-      <h1 className="w-full text-4xl text-teal-950 text-center border-b-teal-700 border-b font-bold pb-2 pt-4 mb-2">
+    <div className="p-2 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto">
+      <h1 className="w-full text-4xl text-teal-950 text-center border-b-teal-700 border-b font-bold p-2  mb-2">
         Sunday Teachings
       </h1>
       <FileList usefulInfo={usefulInfo} />
+      <Button onClick={() => downloadAll(usefulInfo)} className="mt-2">
+        Download All
+        <FontAwesomeIcon icon={faCloudArrowDown} className="ml-2" />
+      </Button>
     </div>
   );
 }
 export default Page;
+
+async function downloadAll(usefulInfo: Props["usefulInfo"]) {
+  const zip = new JSZip();
+  for (const { fileName } of usefulInfo) {
+    const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`;
+    zip.file(fileName, url);
+  }
+  const content = await zip.generateAsync({ type: "blob" });
+  saveAs(content, "msf-sunday-teachings.zip");
+}

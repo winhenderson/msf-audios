@@ -23,11 +23,15 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
     day: createdDateDigits.splice(0, 2).join(""),
   };
   const audioName = splitFileName.join(" ");
-  // const nameLetters = name.split("");
+
+  // hacky, assumes that the bitrate won't ever change
+  const totalSeconds = (size * 8) / 56000;
+  const seconds = (totalSeconds % 60).toFixed(0);
+  const minutes = Math.floor(totalSeconds / 60);
 
   return (
     <li
-      className="flex py-4 hover:text-teal-600 text-teal-950"
+      className="flex py-4 hover:text-teal-600 text-teal-950 hover:bg-teal-50 hover:transition-colors"
       onClick={() => download(fileName)}
     >
       <div className="flex min-w-0 gap-x-4">
@@ -36,11 +40,11 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
           height={48}
           width={48}
           alt="msf logo"
-          className=" flex-none rounded-full bg-gray-50 mr-2"
+          className=" flex-none rounded-full mr-2"
         />
       </div>
       <div className="min-w-0 flex-auto">
-        <p className="text-md font-medium leading-6">{audioName}</p>
+        <p className="text-md font-semibold leading-6">{audioName}</p>
         <p className="mt-1 text-xs leading-5 text-gray-500">
           {`${createdDate.month}/${createdDate.day}/20${createdDate.year}`}
         </p>
@@ -57,10 +61,11 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
         {path}
       </button>
       {/* <div className="text-gray-500 flex justify-around basis-1/3"> */}
-      {/* <div>
-        <span>{finalString}</span>
+      <div className="text-gray-500 text-xs grid grid-rows-3 mr-2 text-right">
         <span>{(size / 1000000).toFixed(1)} MB</span>
-      </div> */}
+        {/* <span>{(size * 8) / 56000 / 60}</span> */}
+        <span>{`${minutes}:${seconds}`}</span>
+      </div>
     </li>
   );
 };
@@ -68,8 +73,8 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
 export default AudioFile;
 
 function download(path: string) {
-  const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${path}`;
-  fetch(url).then(async (response) => {
+  const downloadUrl = `https://msf-audios.nyc3.digitaloceanspaces.com/${path}`;
+  fetch(downloadUrl).then(async (response) => {
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
