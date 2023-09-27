@@ -5,9 +5,7 @@ import Button from "@/components/Button";
 import { saveAs } from "file-saver";
 import JSZip from "jszip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowDown, faPodcast } from "@fortawesome/free-solid-svg-icons";
-import { podcastXML } from "@/lib/podcast";
-import fs from "node:fs";
+import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
 
 export type MetaData = ReturnType<typeof cloud.metaData>;
