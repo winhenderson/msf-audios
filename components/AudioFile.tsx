@@ -1,17 +1,16 @@
-import { DateString } from "@/pages";
 import Image from "next/image";
 import React from "react";
 import Button from "./Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
+import { download, getData } from "@/lib/utils";
 
 type Props = {
   fileName: string;
-  lastModified: DateString;
   size: number;
 };
 
-const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
+const AudioFile: React.FC<Props> = ({ fileName, size }) => {
   const info = getData(fileName, size);
 
   return (
@@ -56,73 +55,3 @@ const AudioFile: React.FC<Props> = ({ fileName, lastModified, size }) => {
 };
 
 export default AudioFile;
-
-function download(path: string) {
-  const downloadUrl = `https://msf-audios.nyc3.digitaloceanspaces.com/${path}`;
-  fetch(downloadUrl).then(async (response) => {
-    const blob = await response.blob();
-    const url = window.URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    const contentDisposition = response.headers.get("content-disposition");
-    let fileName = path;
-    if (contentDisposition) {
-      const fileNameMatch = contentDisposition.match(/filename="(.+)"/) ?? [];
-      if (fileNameMatch.length === 2) fileName = fileNameMatch[1];
-    }
-    link.setAttribute("download", fileName);
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.URL.revokeObjectURL(url);
-  });
-}
-
-export function getData(
-  fileName: string,
-  fileSize: number
-): {
-  cleanName: string;
-  size: number;
-  lengthInSeconds: number;
-  durationString: string;
-  createdDate: Date;
-  year: number;
-  month: number;
-  day: number;
-} {
-  const shortenedFileName = fileName.replace(".mp3", "");
-  const underscoredFileName = shortenedFileName
-    .split("")
-    .map((letter) => (letter === " " ? "_" : letter))
-    .join("");
-  const splitFileName = underscoredFileName.split("_");
-  const createdDateDigits = splitFileName.splice(0, 1)[0].split("");
-  const createdDate = {
-    year: Number(createdDateDigits.splice(0, 2).join("")),
-    month: Number(Number(createdDateDigits.splice(0, 2).join("")).toFixed(0)),
-    day: Number(createdDateDigits.splice(0, 2).join("")),
-  };
-  const audioName = splitFileName.join(" ");
-
-  // hacky, assumes that the bitrate won't ever change
-  const totalSeconds = (fileSize * 8) / 56000;
-  const seconds = (totalSeconds % 60).toFixed(0);
-  const minutes = Math.floor(totalSeconds / 60);
-
-  return {
-    cleanName: audioName,
-    size: fileSize,
-    lengthInSeconds: totalSeconds,
-    createdDate: new Date(
-      createdDate.year + 2000,
-      createdDate.month - 1,
-      createdDate.day,
-      12
-    ),
-    year: createdDate.year,
-    month: createdDate.month,
-    day: createdDate.day,
-    durationString: `${minutes}:${seconds}`,
-  };
-}

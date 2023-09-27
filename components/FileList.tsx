@@ -1,13 +1,9 @@
-import { DateString } from "@/pages";
 import React from "react";
 import AudioFile from "./AudioFile";
+import { UsefulInfo } from "@/lib/types";
 
 type Props = {
-  usefulInfo: Array<{
-    fileName: string;
-    lastModified: DateString;
-    size: number;
-  }>;
+  usefulInfo: UsefulInfo;
 };
 
 const FileList: React.FC<Props> = ({ usefulInfo }) => {
@@ -17,7 +13,6 @@ const FileList: React.FC<Props> = ({ usefulInfo }) => {
         <AudioFile
           fileName={info.fileName}
           key={crypto.randomUUID()}
-          lastModified={info.lastModified}
           size={info.size}
         />
       ))}

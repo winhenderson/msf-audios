@@ -1,5 +1,5 @@
-import { getData } from "@/components/AudioFile";
-import { UsefulInfo } from "@/pages";
+import { UsefulInfo } from "./types";
+import { getData } from "./utils";
 
 export function podcastXML(usefulInfo: UsefulInfo): string {
   return `<?xml version="1.0" encoding="UTF-8"?>

@@ -1,43 +1,16 @@
 import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
-import * as cloud from "@friends-library/cloud";
 import FileList from "@/components/FileList";
 import Button from "@/components/Button";
-import { saveAs } from "file-saver";
-import JSZip from "jszip";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
 import Link from "next/link";
-
-export type MetaData = ReturnType<typeof cloud.metaData>;
-
-export type DateString = string;
-export type UsefulInfo = Array<{
-  fileName: string;
-  lastModified: DateString;
-  size: number;
-}>;
+import { UsefulInfo } from "@/lib/types";
+import { downloadAll, getUsefulInfo } from "@/lib/utils";
 
 type Props = { usefulInfo: UsefulInfo };
 
 export const getServerSideProps = (async (context) => {
-  const fileNames = await cloud.listObjects("");
-  const promisedData: MetaData[] = [];
-  for (const file of fileNames) {
-    if (!file.endsWith(".png")) {
-      promisedData.push(cloud.metaData(file));
-    }
-  }
-  const data = await Promise.all(promisedData);
-  const usefulInfo = [];
-  for (let i = 0; i < promisedData.length; i++) {
-    usefulInfo.push({
-      fileName: fileNames[i],
-      lastModified:
-        data[i].LastModified?.toISOString() ?? new Date().toISOString(),
-      size: data[i].ContentLength ?? 0,
-    });
-  }
-  usefulInfo.reverse();
+  const usefulInfo = await getUsefulInfo();
   return { props: { usefulInfo } };
 }) satisfies GetServerSideProps<Props>;
 
@@ -65,25 +38,16 @@ export function Page({
           Podcast
           <FontAwesomeIcon icon={faPodcast} className="ml-2" />
         </Button> */}
-        <Link
+        {/* eslint-disable-next-line */}
+        <a
           href="./podcast.rss"
           type="application/rss+xml"
           className="w-full bg-teal-900 text-white text-center"
         >
           Podcast
-        </Link>
+        </a>
       </div>
     </div>
   );
 }
 export default Page;
-
-async function downloadAll(usefulInfo: UsefulInfo) {
-  const zip = new JSZip();
-  for (const { fileName } of usefulInfo) {
-    const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`;
-    zip.file(fileName, url);
-  }
-  const content = await zip.generateAsync({ type: "blob" });
-  saveAs(content, "msf-sunday-teachings.zip");
-}
