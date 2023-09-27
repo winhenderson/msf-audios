@@ -49,10 +49,9 @@ function episode(fileName: string, size: number): string {
   return `<item>
   <title>${info.cleanName}</title>
   <enclosure
-    url="https://msf-audios.nyc3.digitaloceanspaces.com/${info.cleanName.replace(
-      / /g,
-      "%20"
-    )}"
+    url="https://msf-audios.nyc3.digitaloceanspaces.com/${encodeURIComponent(
+      fileName
+    )}
     length="${size}"
     type="audio/mpeg"
   />
@@ -66,9 +65,8 @@ function episode(fileName: string, size: number): string {
   <description>Sunday morning teaching on "${
     info.cleanName
   }" by Jason Henderson</description>
-  <guid isPermaLink="true">https://msf-audios.nyc3.digitaloceanspaces.com/${info.cleanName.replace(
-    / /g,
-    "%20"
+  <guid isPermaLink="true">https://msf-audios.nyc3.digitaloceanspaces.com/${encodeURIComponent(
+    fileName
   )}</guid>
   <pubDate>${info.createdDate.toUTCString()}</pubDate>
   <itunes:duration>${Math.round(info.lengthInSeconds)}</itunes:duration>
