@@ -2,7 +2,7 @@ import type { InferGetServerSidePropsType, GetServerSideProps } from "next";
 import FileList from "@/components/FileList";
 import Button from "@/components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
+import { faCloudArrowDown, faPodcast } from "@fortawesome/free-solid-svg-icons";
 import { UsefulInfo } from "@/lib/types";
 import { downloadAll, getUsefulInfo } from "@/lib/utils";
 
@@ -13,12 +13,6 @@ export const getServerSideProps = (async (context) => {
   return { props: { usefulInfo } };
 }) satisfies GetServerSideProps<Props>;
 
-//
-//
-//
-//
-//
-
 export function Page({
   usefulInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -27,24 +21,23 @@ export function Page({
       <h1 className="w-full text-5xl text-teal-950 text-center border-b-teal-500 border-b font-extrabold p-2 mb-2">
         Sunday Teachings
       </h1>
-      <FileList usefulInfo={usefulInfo} />
-      <div className="flex w-full gap-2">
-        <Button onClick={() => downloadAll(usefulInfo)} className="mt-2">
+
+      <div className="flex w-full gap-2 flex-col xs:flex-row mb-2">
+        <Button
+          type="button"
+          onClick={() => downloadAll(usefulInfo)}
+          className="mt-2"
+        >
           Download All
           <FontAwesomeIcon icon={faCloudArrowDown} className="ml-2" />
         </Button>
-        {/* <Button onClick={() => } className="mt-2">
+        <Button type="external" href="/api/podcast" className="mt-2">
           Podcast
           <FontAwesomeIcon icon={faPodcast} className="ml-2" />
-        </Button> */}
-        {/* eslint-disable-next-line */}
-        <a
-          href="/api/podcast"
-          className="w-full bg-teal-900 text-white text-center"
-        >
-          Podcast
-        </a>
+        </Button>
       </div>
+
+      <FileList usefulInfo={usefulInfo} />
     </div>
   );
 }

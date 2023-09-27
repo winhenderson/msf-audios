@@ -47,7 +47,7 @@ const AudioFile: React.FC<Props> = ({ fileName, size }) => {
         <span>{info.durationString}</span>
       </div>
 
-      <Button onClick={() => download(fileName)} small>
+      <Button type="button" onClick={() => download(fileName)} small>
         <FontAwesomeIcon icon={faCloudArrowDown} />
       </Button>
     </li>
