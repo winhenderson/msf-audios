@@ -25,11 +25,13 @@ export const getServerSideProps = (async (context) => {
   const fileNames = await cloud.listObjects("");
   const promisedData: MetaData[] = [];
   for (const file of fileNames) {
-    promisedData.push(cloud.metaData(file));
+    if (!file.endsWith(".png")) {
+      promisedData.push(cloud.metaData(file));
+    }
   }
   const data = await Promise.all(promisedData);
   const usefulInfo = [];
-  for (let i = 0; i < fileNames.length; i++) {
+  for (let i = 0; i < promisedData.length; i++) {
     usefulInfo.push({
       fileName: fileNames[i],
       lastModified:
@@ -67,6 +69,7 @@ export function Page({
         </Button> */}
         <Link
           href="./podcast.rss"
+          type="application/rss+xml"
           className="w-full bg-teal-900 text-white text-center"
         >
           Podcast

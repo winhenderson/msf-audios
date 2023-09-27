@@ -113,7 +113,7 @@ export function getData(
     size: fileSize,
     lengthInSeconds: totalSeconds,
     createdDate: new Date(
-      createdDate.year,
+      createdDate.year + 2000,
       createdDate.month - 1,
       createdDate.day
     ),
