@@ -51,7 +51,7 @@ function episode(fileName: string, size: number): string {
   <enclosure
     url="https://msf-audios.nyc3.digitaloceanspaces.com/${encodeURIComponent(
       fileName
-    )}
+    )}"
     length="${size}"
     type="audio/mpeg"
   />

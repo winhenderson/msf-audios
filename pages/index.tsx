@@ -3,7 +3,6 @@ import FileList from "@/components/FileList";
 import Button from "@/components/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
-import Link from "next/link";
 import { UsefulInfo } from "@/lib/types";
 import { downloadAll, getUsefulInfo } from "@/lib/utils";
 
@@ -40,8 +39,7 @@ export function Page({
         </Button> */}
         {/* eslint-disable-next-line */}
         <a
-          href="./podcast.rss"
-          type="application/rss+xml"
+          href="/api/podcast"
           className="w-full bg-teal-900 text-white text-center"
         >
           Podcast
