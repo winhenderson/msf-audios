@@ -3,6 +3,10 @@ import { listObjects, metaData } from "@friends-library/cloud";
 import { MetaData, UsefulInfo } from "./types";
 import saveAs from "file-saver";
 
+export function upload() {
+  return;
+}
+
 export async function downloadAll(usefulInfo: UsefulInfo) {
   const zip = new JSZip();
   for (const { fileName } of usefulInfo) {
