@@ -2,10 +2,7 @@ import JSZip from "jszip";
 import { listObjects, metaData } from "@friends-library/cloud";
 import { MetaData, UsefulInfo } from "./types";
 import saveAs from "file-saver";
-
-export function upload() {
-  return;
-}
+import { S3 } from "aws-sdk";
 
 export async function downloadAll(usefulInfo: UsefulInfo) {
   const zip = new JSZip();

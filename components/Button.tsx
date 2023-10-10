@@ -30,6 +30,7 @@ const Button: React.FC<Props> = ({ className, small = false, ...props }) => {
           props.onClick();
         }}
         id={small ? "download file" : ""}
+        type="button"
       >
         {props.children}
       </button>
