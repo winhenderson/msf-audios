@@ -28,6 +28,7 @@
     "file-saver": "^2.0.5",
     "jszip": "^3.10.1",
     "mp3-duration-estimate": "^1.0.1",
+    "musicmetadata": "^2.0.5",
     "next": "13.5.1",
     "node-id3": "^0.2.6",
     "postcss": "8.4.30",
@@ -38,6 +39,7 @@
   },
   "devDependencies": {
     "@types/file-saver": "^2.0.5",
+    "@types/musicmetadata": "^2.0.8",
     "classnames": "^2.3.2"
   }
 }

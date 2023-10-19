@@ -2,7 +2,9 @@ import JSZip from "jszip";
 import { listObjects, metaData } from "@friends-library/cloud";
 import { MetaData, UsefulInfo } from "./types";
 import saveAs from "file-saver";
-import createEstimator, { FetchDataReader } from "mp3-duration-estimate";
+import mm from "musicmetadata";
+import NodeID3 from "node-id3";
+// import createEstimator, { FetchDataReader } from "mp3-duration-estimate";
 
 export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   const zip = new JSZip();
@@ -97,14 +99,29 @@ export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
 async function getAudioDuration(
   fileName: string
 ): Promise<{ totalSeconds: number; seconds: number; minutes: number }> {
-  const estimator = createEstimator(new FetchDataReader(fetch));
-  const duration = await estimator(
-    `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`
+  console.log(fileName);
+  const headers = await fetch(
+    `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
+    { method: "HEAD" }
   );
-  console.log(`${fileName}: ${duration / 60}`);
+
+  const fileSizeString = headers.headers.get("Content-Length");
+  if (!fileSizeString) {
+    throw new Error("empty file?");
+  }
+  const fileSize = Number(fileSizeString);
+
+  const tagBytes = await fetch(
+    `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
+    { headers: { Range: `${fileSize - 355}-${fileSize}` } }
+  );
+
+  const tags = NodeID3.read(Buffer.from(await tagBytes.arrayBuffer()));
+  console.log(tags);
+
   return {
-    totalSeconds: duration,
-    seconds: Number((duration % 60).toFixed(0)),
-    minutes: Math.floor(duration / 60),
+    totalSeconds: 0,
+    seconds: 0,
+    minutes: 0,
   };
 }
