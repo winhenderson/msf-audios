@@ -3,7 +3,7 @@ import AudioFile from "./AudioFile";
 import { UsefulInfo } from "@/lib/types";
 
 type Props = {
-  usefulInfo: UsefulInfo;
+  usefulInfo: Array<UsefulInfo>;
 };
 
 const FileList: React.FC<Props> = ({ usefulInfo }) => {
@@ -11,9 +11,10 @@ const FileList: React.FC<Props> = ({ usefulInfo }) => {
     <ul className="divide-y w-full divide-gray-200">
       {usefulInfo.map((info) => (
         <AudioFile
-          fileName={info.fileName}
+          // fileName={info.fileName}
           key={crypto.randomUUID()}
-          size={info.size}
+          usefulInfo={info}
+          // size={info.size}
         />
       ))}
     </ul>

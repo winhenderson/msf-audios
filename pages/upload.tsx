@@ -5,22 +5,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "@/components/Button";
-import { S3 } from "aws-sdk";
 
 const Upload: React.FC = () => {
   const [dragIsOver, setDragIsOver] = useState(false);
   const [file, setFile] = useState<File>();
-  const [upload, setUpload] = useState<S3.ManagedUpload | null>(null);
-  const [progress, setProgress] = useState(0);
-
-  useEffect(() => {
-    return upload?.abort();
-  }, []);
-
-  useEffect(() => {
-    setProgress(0);
-    setUpload(null);
-  }, [file]);
 
   return (
     <div className="p-2 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto max-w-[1000px]">
@@ -37,7 +25,9 @@ const Upload: React.FC = () => {
       >
         <label
           htmlFor="dropzone-file"
-          className={`flex flex-col items-center justify-center p-8 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-teal-50 bg-opacity-40 hover:bg-opacity-90 text-teal-950 hover:text-opacity-80`}
+          className={`flex flex-col items-center justify-center p-8 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-teal-50 bg-opacity-40  text-teal-950 ${
+            dragIsOver ? "bg-teal-100" : "bg-teal-50"
+          }`}
         >
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
             {!file && (
@@ -56,7 +46,6 @@ const Upload: React.FC = () => {
           <input
             id="dropzone-file"
             type="file"
-            // multiple
             className="opacity-0"
             onChange={handleChange}
           />
@@ -64,7 +53,6 @@ const Upload: React.FC = () => {
         <Button
           type="button"
           onClick={async () => {
-            console.log(file);
             if (!file) {
               return;
             }
@@ -73,7 +61,10 @@ const Upload: React.FC = () => {
               headers: {
                 "Content-Type": "application/json",
               },
-              body: JSON.stringify({ filename: file.name }),
+              body: JSON.stringify({
+                filename: file.name,
+                length: file.length,
+              }),
             });
             const json = await res.json();
 
@@ -85,7 +76,6 @@ const Upload: React.FC = () => {
                 "x-amz-acl": "public-read",
               },
             });
-            // console.log(json.url);
           }}
           className="mt-4"
         >

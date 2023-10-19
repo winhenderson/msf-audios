@@ -7,7 +7,14 @@ export type MetaData = Promise<{
 
 export type DateString = string;
 
-export type UsefulInfo = Array<{
-  fileName: string;
+export type UsefulInfo = {
+  cleanName: string;
   size: number;
-}>;
+  lengthInSeconds: number;
+  durationString: string;
+  createdDate: string;
+  year: number;
+  month: number;
+  day: number;
+  fileName: string;
+};

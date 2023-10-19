@@ -1,7 +1,7 @@
 import { UsefulInfo } from "./types";
 import { getData } from "./utils";
 
-export function podcastXML(usefulInfo: UsefulInfo): string {
+export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
   return `<?xml version="1.0" encoding="UTF-8"?>
   <rss
     version="2.0"
@@ -44,8 +44,8 @@ export function podcastXML(usefulInfo: UsefulInfo): string {
   </rss>`;
 }
 
-function episode(fileName: string, size: number): string {
-  const info = getData(fileName, size);
+async function episode(fileName: string, size: number): Promise<string> {
+  const info = await getData(fileName, size);
   return `<item>
   <title>${info.cleanName}</title>
   <enclosure
@@ -68,7 +68,7 @@ function episode(fileName: string, size: number): string {
   <guid isPermaLink="true">https://msf-audios.nyc3.digitaloceanspaces.com/${encodeURIComponent(
     fileName
   )}</guid>
-  <pubDate>${info.createdDate.toUTCString()}</pubDate>
+  <pubDate>${new Date(info.createdDate).toUTCString()}</pubDate>
   <itunes:duration>${Math.round(info.lengthInSeconds)}</itunes:duration>
   <itunes:explicit>false</itunes:explicit>
   <itunes:episodeType>full</itunes:episodeType>

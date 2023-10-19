@@ -15,15 +15,14 @@ export default async function handler(
     },
   });
 
-  // console.log("here is the json", req.body);
-  const json = req.body;
+  const fileInfo = req.body;
 
   const command = new PutObjectCommand({
     Bucket: "msf-audios",
-    Key: json.filename,
+    Key: fileInfo.filename,
     ContentType: "audio/mpeg",
     ACL: "public-read",
-    ContentLength: 29466,
+    ContentLength: fileInfo.length,
   });
 
   const url = await getSignedUrl(client, command, { expiresIn: 60 * 60 });

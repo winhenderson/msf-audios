@@ -6,7 +6,7 @@ import { faCloudArrowDown, faPodcast } from "@fortawesome/free-solid-svg-icons";
 import { UsefulInfo } from "@/lib/types";
 import { downloadAll, getUsefulInfo } from "@/lib/utils";
 
-type Props = { usefulInfo: UsefulInfo };
+type Props = { usefulInfo: Array<UsefulInfo> };
 
 export const getServerSideProps = (async (context) => {
   const usefulInfo = await getUsefulInfo();

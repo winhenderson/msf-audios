@@ -2,9 +2,9 @@ import JSZip from "jszip";
 import { listObjects, metaData } from "@friends-library/cloud";
 import { MetaData, UsefulInfo } from "./types";
 import saveAs from "file-saver";
-import { S3 } from "aws-sdk";
+import createEstimator, { FetchDataReader } from "mp3-duration-estimate";
 
-export async function downloadAll(usefulInfo: UsefulInfo) {
+export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   const zip = new JSZip();
   for (const { fileName } of usefulInfo) {
     const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`;
@@ -35,19 +35,10 @@ export function download(path: string): void {
   });
 }
 
-export function getData(
+export async function getData(
   fileName: string,
   fileSize: number
-): {
-  cleanName: string;
-  size: number;
-  lengthInSeconds: number;
-  durationString: string;
-  createdDate: Date;
-  year: number;
-  month: number;
-  day: number;
-} {
+): Promise<UsefulInfo> {
   const shortenedFileName = fileName.replace(".mp3", "");
   const underscoredFileName = shortenedFileName
     .split("")
@@ -62,13 +53,11 @@ export function getData(
   };
   const audioName = splitFileName.join(" ");
 
-  // hacky, assumes that the bitrate won't ever change
-  const totalSeconds = (fileSize * 8) / 56000;
-  const seconds = (totalSeconds % 60).toFixed(0);
-  const minutes = Math.floor(totalSeconds / 60);
+  const { totalSeconds, seconds, minutes } = await getAudioDuration(fileName);
 
   return {
     cleanName: audioName,
+    fileName: fileName,
     size: fileSize,
     lengthInSeconds: totalSeconds,
     createdDate: new Date(
@@ -76,7 +65,7 @@ export function getData(
       createdDate.month - 1,
       createdDate.day,
       12
-    ),
+    ).toISOString(),
     year: createdDate.year,
     month: createdDate.month,
     day: createdDate.day,
@@ -84,7 +73,7 @@ export function getData(
   };
 }
 
-export async function getUsefulInfo(): Promise<UsefulInfo> {
+export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const fileNames = await listObjects("");
   const promisedData: MetaData[] = [];
   for (const file of fileNames) {
@@ -95,11 +84,27 @@ export async function getUsefulInfo(): Promise<UsefulInfo> {
   const data = await Promise.all(promisedData);
   const usefulInfo = [];
   for (let i = 0; i < promisedData.length; i++) {
-    usefulInfo.push({
-      fileName: fileNames[i],
-      size: data[i].ContentLength ?? 0,
-    });
+    // usefulInfo.push({
+    //   fileName: fileNames[i],
+    //   size: data[i].ContentLength ?? 0,
+    // });
+    usefulInfo.push(await getData(fileNames[i], data[i].ContentLength ?? 0));
   }
   usefulInfo.reverse();
   return usefulInfo;
+}
+
+async function getAudioDuration(
+  fileName: string
+): Promise<{ totalSeconds: number; seconds: number; minutes: number }> {
+  const estimator = createEstimator(new FetchDataReader(fetch));
+  const duration = await estimator(
+    `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`
+  );
+  console.log(`${fileName}: ${duration / 60}`);
+  return {
+    totalSeconds: duration,
+    seconds: Number((duration % 60).toFixed(0)),
+    minutes: Math.floor(duration / 60),
+  };
 }
