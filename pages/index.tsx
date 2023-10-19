@@ -25,6 +25,7 @@ export function Page({
       <div className="flex w-full gap-2 flex-col xs:flex-row mb-2">
         <Button
           type="button"
+          buttonType="button"
           onClick={() => downloadAll(usefulInfo)}
           className="mt-2"
         >

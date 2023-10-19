@@ -8,7 +8,11 @@ type CommonProps = {
 };
 
 type Props =
-  | ({ type: "button"; onClick(): void } & CommonProps)
+  | ({
+      type: "button";
+      buttonType: "submit" | "button";
+      onClick(): void;
+    } & CommonProps)
   | ({ type: "external"; href: string } & CommonProps);
 
 const Button: React.FC<Props> = ({ className, small = false, ...props }) => {
@@ -30,7 +34,7 @@ const Button: React.FC<Props> = ({ className, small = false, ...props }) => {
           props.onClick();
         }}
         id={small ? "download file" : ""}
-        type="button"
+        type={props.buttonType}
       >
         {props.children}
       </button>

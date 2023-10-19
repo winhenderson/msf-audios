@@ -16,7 +16,7 @@ export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
         type="application/rss+xml"
       />
       <title>MSF Teachings</title>
-      <itunes:subtitle>Taught by some great people at MSF</itunes:subtitle>
+      <itunes:subtitle>Teachings from some great people at MSF</itunes:subtitle>
       <link>https://msf-audios.vercel.app/podcast.rss</link>
       <language>en</language>
       <itunes:author>MSF</itunes:author>

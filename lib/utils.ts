@@ -84,33 +84,3 @@ export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   usefulInfo.reverse();
   return usefulInfo;
 }
-
-// async function getAudioDuration(
-//   fileName: string
-// ): Promise<{ totalSeconds: number; seconds: number; minutes: number }> {
-//   console.log(fileName);
-//   const headers = await fetch(
-//     `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
-//     { method: "HEAD" }
-//   );
-
-//   const fileSizeString = headers.headers.get("Content-Length");
-//   if (!fileSizeString) {
-//     throw new Error("empty file?");
-//   }
-//   const fileSize = Number(fileSizeString);
-
-//   const tagBytes = await fetch(
-//     `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
-//     { headers: { Range: `${fileSize - 355}-${fileSize}` } }
-//   );
-
-//   const tags = NodeID3.read(Buffer.from(await tagBytes.arrayBuffer()));
-//   console.log(tags);
-
-//   return {
-//     totalSeconds: 0,
-//     seconds: 0,
-//     minutes: 0,
-//   };
-// }

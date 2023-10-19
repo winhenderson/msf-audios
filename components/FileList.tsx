@@ -10,12 +10,7 @@ const FileList: React.FC<Props> = ({ usefulInfo }) => {
   return (
     <ul className="divide-y w-full divide-gray-200">
       {usefulInfo.map((info) => (
-        <AudioFile
-          // fileName={info.fileName}
-          key={crypto.randomUUID()}
-          usefulInfo={info}
-          // size={info.size}
-        />
+        <AudioFile key={crypto.randomUUID()} usefulInfo={info} />
       ))}
     </ul>
   );
