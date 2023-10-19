@@ -11,7 +11,7 @@ export default async function handler(
   res: NextApiResponse<ResponseData>
 ) {
   const usefulInfo = await getUsefulInfo();
-  const podcastString = podcastXML(usefulInfo);
+  const podcastString = await podcastXML(usefulInfo);
 
   const cacheMaxAgeUntilStaleSeconds = 60 * 60; // 1 minute
   const cacheMaxAgeStaleDataReturnSeconds = 60 * 60 * 60; // 60 minutes

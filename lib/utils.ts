@@ -2,9 +2,6 @@ import JSZip from "jszip";
 import { listObjects, metaData } from "@friends-library/cloud";
 import { MetaData, UsefulInfo } from "./types";
 import saveAs from "file-saver";
-import mm from "musicmetadata";
-import NodeID3 from "node-id3";
-// import createEstimator, { FetchDataReader } from "mp3-duration-estimate";
 
 export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   const zip = new JSZip();
@@ -37,25 +34,20 @@ export function download(path: string): void {
   });
 }
 
-export async function getData(
-  fileName: string,
-  fileSize: number
-): Promise<UsefulInfo> {
+export function getData(fileName: string, fileSize: number): UsefulInfo {
   const shortenedFileName = fileName.replace(".mp3", "");
-  const underscoredFileName = shortenedFileName
-    .split("")
-    .map((letter) => (letter === " " ? "_" : letter))
-    .join("");
-  const splitFileName = underscoredFileName.split("_");
-  const createdDateDigits = splitFileName.splice(0, 1)[0].split("");
+  const splitByUnderscores = shortenedFileName.split("_");
+  const createdDateDigits = splitByUnderscores[0].split("");
   const createdDate = {
     year: Number(createdDateDigits.splice(0, 2).join("")),
     month: Number(Number(createdDateDigits.splice(0, 2).join("")).toFixed(0)),
     day: Number(createdDateDigits.splice(0, 2).join("")),
   };
-  const audioName = splitFileName.join(" ");
-
-  const { totalSeconds, seconds, minutes } = await getAudioDuration(fileName);
+  const audioName = splitByUnderscores[1].split("-").join(" ");
+  const speaker = splitByUnderscores[2].split("-").join(" ");
+  const totalSeconds = Number(splitByUnderscores[3]);
+  const minutes = Math.floor(totalSeconds / 60).toFixed(0);
+  const seconds = (totalSeconds % 60).toString().padStart(2, "0");
 
   return {
     cleanName: audioName,
@@ -72,6 +64,7 @@ export async function getData(
     month: createdDate.month,
     day: createdDate.day,
     durationString: `${minutes}:${seconds}`,
+    speaker: speaker,
   };
 }
 
@@ -86,42 +79,38 @@ export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const data = await Promise.all(promisedData);
   const usefulInfo = [];
   for (let i = 0; i < promisedData.length; i++) {
-    // usefulInfo.push({
-    //   fileName: fileNames[i],
-    //   size: data[i].ContentLength ?? 0,
-    // });
     usefulInfo.push(await getData(fileNames[i], data[i].ContentLength ?? 0));
   }
   usefulInfo.reverse();
   return usefulInfo;
 }
 
-async function getAudioDuration(
-  fileName: string
-): Promise<{ totalSeconds: number; seconds: number; minutes: number }> {
-  console.log(fileName);
-  const headers = await fetch(
-    `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
-    { method: "HEAD" }
-  );
+// async function getAudioDuration(
+//   fileName: string
+// ): Promise<{ totalSeconds: number; seconds: number; minutes: number }> {
+//   console.log(fileName);
+//   const headers = await fetch(
+//     `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
+//     { method: "HEAD" }
+//   );
 
-  const fileSizeString = headers.headers.get("Content-Length");
-  if (!fileSizeString) {
-    throw new Error("empty file?");
-  }
-  const fileSize = Number(fileSizeString);
+//   const fileSizeString = headers.headers.get("Content-Length");
+//   if (!fileSizeString) {
+//     throw new Error("empty file?");
+//   }
+//   const fileSize = Number(fileSizeString);
 
-  const tagBytes = await fetch(
-    `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
-    { headers: { Range: `${fileSize - 355}-${fileSize}` } }
-  );
+//   const tagBytes = await fetch(
+//     `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`,
+//     { headers: { Range: `${fileSize - 355}-${fileSize}` } }
+//   );
 
-  const tags = NodeID3.read(Buffer.from(await tagBytes.arrayBuffer()));
-  console.log(tags);
+//   const tags = NodeID3.read(Buffer.from(await tagBytes.arrayBuffer()));
+//   console.log(tags);
 
-  return {
-    totalSeconds: 0,
-    seconds: 0,
-    minutes: 0,
-  };
-}
+//   return {
+//     totalSeconds: 0,
+//     seconds: 0,
+//     minutes: 0,
+//   };
+// }

@@ -15,13 +15,13 @@ export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
         rel="self"
         type="application/rss+xml"
       />
-      <title>MSF Sunday Morning Teachings</title>
-      <itunes:subtitle>Taught by Jason and Jared Henderson</itunes:subtitle>
+      <title>MSF Teachings</title>
+      <itunes:subtitle>Taught by some great people at MSF</itunes:subtitle>
       <link>https://msf-audios.vercel.app/podcast.rss</link>
       <language>en</language>
       <itunes:author>MSF</itunes:author>
-      <description>MSF Sunday Morning Teachings</description>
-      <itunes:summary>MSF Sunday Morning Teachings</itunes:summary>
+      <description>Teachings from some great people at MSF</description>
+      <itunes:summary>MSF Teachings</itunes:summary>
       <itunes:explicit>false</itunes:explicit>
       <itunes:type>episodic</itunes:type>
       <itunes:owner>
@@ -31,7 +31,7 @@ export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
       <itunes:image href="https://msf-audios.nyc3.digitaloceanspaces.com/MSF_Podcast.png" />
       <image>
         <url>https://msf-audios.nyc3.digitaloceanspaces.com/MSF_Podcast.png</url>
-        <title>MSF Sunday Morning Teachings</title>
+        <title>MSF Teachings</title>
         <link>https://msf-audios.vercel.app/podcast.rss</link>
       </image>
       <itunes:category text="Religion &amp; Spirituality">
@@ -44,8 +44,8 @@ export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
   </rss>`;
 }
 
-async function episode(fileName: string, size: number): Promise<string> {
-  const info = await getData(fileName, size);
+function episode(fileName: string, size: number): string {
+  const info = getData(fileName, size);
   return `<item>
   <title>${info.cleanName}</title>
   <enclosure
@@ -55,16 +55,14 @@ async function episode(fileName: string, size: number): Promise<string> {
     length="${size}"
     type="audio/mpeg"
   />
-  <itunes:author>Jason Henderson</itunes:author>
-  <itunes:summary>Sunday morning teaching on "${
-    info.cleanName
-  }" by Jason Henderson</itunes:summary>
-  <itunes:subtitle>Sunday morning teaching on "${
-    info.cleanName
-  }" by Jason Henderson</itunes:subtitle>
-  <description>Sunday morning teaching on "${
-    info.cleanName
-  }" by Jason Henderson</description>
+  <itunes:author>${info.speaker}</itunes:author>
+  <itunes:summary>Teaching on "${info.cleanName}" by ${
+    info.speaker
+  }</itunes:summary>
+  <itunes:subtitle>Teaching on "${info.cleanName}" by ${
+    info.speaker
+  }</itunes:subtitle>
+  <description>Teaching on "${info.cleanName}" by ${info.speaker}</description>
   <guid isPermaLink="true">https://msf-audios.nyc3.digitaloceanspaces.com/${encodeURIComponent(
     fileName
   )}</guid>
