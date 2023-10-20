@@ -6,6 +6,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "@/components/Button";
 import { upload } from "@/lib/utils";
+import Input from "@/components/Input";
 
 const Upload: React.FC = () => {
   const today = new Date();
@@ -65,104 +66,34 @@ const Upload: React.FC = () => {
           </label>
 
           <section className={`${!file && "hidden"} flex flex-col gap-4`}>
-            <div className="flex flex-col text-teal-950 gap-2">
-              <label
-                htmlFor="title"
-                className="text-xs uppercase font-semibold text-teal-800"
-              >
-                Title:
-              </label>
-              <input
-                type="text"
-                id="title"
-                className="bg-gradient-to-br from-teal-700/25 to-teal-950/25 bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2"
-                value={title}
-                onChange={(e) => {
-                  e.preventDefault();
-                  setTitle(e.target.value);
-                }}
-                required
-              />
-            </div>
+            <Input type="text" value={title} setValue={setTitle} required>
+              Title
+            </Input>
 
-            <div className="flex flex-col text-teal-950 gap-2">
-              <label
-                htmlFor="created-date"
-                className="text-xs uppercase font-semibold text-teal-800"
-              >
-                Date of Teaching:
-              </label>
-              <input
-                type="date"
-                id="created-date"
-                className="bg-gradient-to-br from-teal-700/25 to-teal-950/25 bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2"
-                value={createdDate}
-                onChange={(e) => {
-                  e.preventDefault();
-                  setCreatedDate(e.target.value);
-                }}
-                required
-              />
-            </div>
+            <Input
+              type="date"
+              value={createdDate}
+              setValue={setCreatedDate}
+              required
+            >
+              Teaching Date
+            </Input>
 
-            <div className="flex flex-col text-teal-950 gap-2">
-              <label
-                className="text-xs uppercase font-semibold text-teal-800"
-                htmlFor="length-in-seconds"
-              >
-                Length in Seconds:
-              </label>
-              <input
-                type="number"
-                id="length-in-seconds"
-                value={seconds}
-                onChange={(e) => {
-                  e.preventDefault();
-                  setSeconds(e.target.value);
-                }}
-                className="bg-gradient-to-br from-teal-700/25 to-teal-950/25 bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2"
-                required
-              />
-            </div>
+            <Input type="number" value={seconds} setValue={setSeconds} required>
+              Length in Seconds
+            </Input>
 
-            <div className="flex flex-col text-teal-950 gap-2">
-              <label
-                className="text-xs uppercase font-semibold text-teal-800"
-                htmlFor="speaker"
-              >
-                Speaker:
-              </label>
-              <input
-                type="text"
-                id="speaker"
-                value={speaker}
-                onChange={(e) => {
-                  e.preventDefault();
-                  setSpeaker(e.target.value);
-                }}
-                className="bg-gradient-to-br from-teal-700/25 to-teal-950/25 bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2"
-                required
-              />
-            </div>
+            <Input type="text" value={speaker} setValue={setSpeaker} required>
+              Speaker
+            </Input>
 
-            <div className="flex flex-col text-teal-950 gap-2">
-              <label
-                className="text-xs uppercase font-semibold text-teal-800"
-                htmlFor="additional"
-              >
-                Additional Information:
-              </label>
-              <input
-                type="text"
-                id="additional"
-                value={additionalInfo}
-                onChange={(e) => {
-                  e.preventDefault();
-                  setAdditionalInfo(e.target.value);
-                }}
-                className="bg-gradient-to-br from-teal-700/25 to-teal-950/25 bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2"
-              />
-            </div>
+            <Input
+              type="text"
+              value={additionalInfo}
+              setValue={setAdditionalInfo}
+            >
+              Additional Information
+            </Input>
 
             <Button
               type="button"
