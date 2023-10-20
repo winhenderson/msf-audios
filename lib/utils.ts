@@ -52,6 +52,10 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     .toString()
     .padStart(2, "0");
   const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+  const extraInfo =
+    splitByUnderscores.length === 5
+      ? splitByUnderscores[4].split("-").join(" ")
+      : null;
 
   return {
     cleanName: audioName,
@@ -69,6 +73,7 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     day: createdDate.day,
     durationString: `${hours > 0 ? `${hours}:` : ""}${minutes}:${seconds}`,
     speaker: speaker,
+    extraInfo: extraInfo,
   };
 }
 

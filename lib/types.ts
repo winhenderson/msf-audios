@@ -18,4 +18,5 @@ export type UsefulInfo = {
   day: number;
   fileName: string;
   speaker: string;
+  extraInfo: string | null;
 };
