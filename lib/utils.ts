@@ -5,15 +5,15 @@ import saveAs from "file-saver";
 
 export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   const zip = new JSZip();
-  for (const { fileName } of usefulInfo) {
+  for (const { fileName, cleanName } of usefulInfo) {
     const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`;
-    zip.file(fileName, url);
+    zip.file(`${cleanName}.mp3`, url);
   }
   const content = await zip.generateAsync({ type: "blob" });
-  saveAs(content, "msf-sunday-teachings.zip");
+  saveAs(content, "MSF-Teachings.zip");
 }
 
-export function download(path: string): void {
+export function download(path: string, cleanName: string): void {
   const downloadUrl = `https://msf-audios.nyc3.digitaloceanspaces.com/${path}`;
   fetch(downloadUrl).then(async (response) => {
     const blob = await response.blob();
@@ -21,7 +21,7 @@ export function download(path: string): void {
     const link = document.createElement("a");
     link.href = url;
     const contentDisposition = response.headers.get("content-disposition");
-    let fileName = path;
+    let fileName = cleanName;
     if (contentDisposition) {
       const fileNameMatch = contentDisposition.match(/filename="(.+)"/) ?? [];
       if (fileNameMatch.length === 2) fileName = fileNameMatch[1];

@@ -10,7 +10,7 @@ const AudioFile: React.FC<{ usefulInfo: UsefulInfo }> = ({ usefulInfo }) => {
   return (
     <li
       className="flex py-4 px-2 hover:text-teal-600 text-teal-950 hover:bg-teal-50 hover:transition-colors"
-      onClick={() => download(usefulInfo.fileName)}
+      onClick={() => download(usefulInfo.fileName, usefulInfo.cleanName)}
     >
       <div className="w-12 h-12 min-w-max">
         <Image
@@ -47,7 +47,7 @@ const AudioFile: React.FC<{ usefulInfo: UsefulInfo }> = ({ usefulInfo }) => {
       <Button
         type="button"
         buttonType="button"
-        onClick={() => download(usefulInfo.fileName)}
+        onClick={() => download(usefulInfo.fileName, usefulInfo.cleanName)}
         small
       >
         <FontAwesomeIcon icon={faCloudArrowDown} />
