@@ -46,7 +46,11 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
   const audioName = splitByUnderscores[1].split("-").join(" ");
   const speaker = splitByUnderscores[2].split("-").join(" ");
   const totalSeconds = Number(splitByUnderscores[3]);
-  const minutes = Math.floor(totalSeconds / 60).toFixed(0);
+  const hours = Number(Math.floor(totalSeconds / 3600).toFixed(0));
+  const minutes = Math.floor((totalSeconds - hours * 60 * 60) / 60)
+    .toFixed(0)
+    .toString()
+    .padStart(2, "0");
   const seconds = (totalSeconds % 60).toString().padStart(2, "0");
 
   return {
@@ -63,7 +67,7 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     year: createdDate.year,
     month: createdDate.month,
     day: createdDate.day,
-    durationString: `${minutes}:${seconds}`,
+    durationString: `${hours > 0 ? `${hours}:` : ""}${minutes}:${seconds}`,
     speaker: speaker,
   };
 }
