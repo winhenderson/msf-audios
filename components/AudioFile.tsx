@@ -22,25 +22,21 @@ const AudioFile: React.FC<{ usefulInfo: UsefulInfo }> = ({ usefulInfo }) => {
         />
       </div>
 
-      <div className="min-w-0 flex-auto mr-2">
-        <p className="text-md font-semibold leading-6">
-          {usefulInfo.cleanName}
-        </p>
-        <p className="mt-1 text-xs leading-5 text-gray-500">
-          {`${usefulInfo.month}/${usefulInfo.day}/20${usefulInfo.year}`}
-        </p>
-      </div>
+      <div className="flex justify-between grow">
+        <div className="flex flex-col w-2/5 xs:w-auto">
+          <p className="text-md font-semibold leading-6">
+            {usefulInfo.cleanName}
+          </p>
+          <p className="mt-1 text-xs leading-5 text-gray-500">
+            {`${usefulInfo.month}/${usefulInfo.day}/20${usefulInfo.year}`}
+          </p>
+        </div>
 
-      <div
-        className={`text-gray-500 text-[10px] xs:grid grid-rows-2 hidden mr-2 place-content-center uppercase tracking-wide xs:mr-4`}
-      >
-        <span>Size:</span>
-        <span>Length:</span>
-      </div>
-
-      <div className="text-gray-600 font-bold text-xs grid grid-rows-2 mr-4 text-right place-content-center">
-        <span>{(usefulInfo.size / 1000000).toFixed(1)} MB</span>
-        <span>{usefulInfo.durationString}</span>
+        <div className="text-teal-900 text-opacity-80 font-bold text-xs flex flex-col text-right place-content-center gap-1 mr-2 xs:mr-4">
+          <span>{(usefulInfo.size / 1000000).toFixed(1)} MB</span>
+          <span>{usefulInfo.durationString}</span>
+          <span>{usefulInfo.speaker}</span>
+        </div>
       </div>
 
       <Button
