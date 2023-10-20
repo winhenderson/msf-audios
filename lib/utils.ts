@@ -5,16 +5,27 @@ import saveAs from "file-saver";
 
 export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   const zip = new JSZip();
+  const promises: Array<Promise<[Blob, string]>> = [];
   for (const { fileName, cleanName } of usefulInfo) {
-    const url = `https://msf-audios.nyc3.digitaloceanspaces.com/${fileName}`;
-    zip.file(`${cleanName}.mp3`, url);
+    const url = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${fileName}`;
+    promises.push(
+      fetch(url)
+        .then((res) => res.blob())
+        .then((blob) => [blob, cleanName])
+    );
   }
+
+  const files = await Promise.all(promises);
+  for (const [blob, cleanName] of files) {
+    zip.file(`${cleanName}.mp3`, blob);
+  }
+
   const content = await zip.generateAsync({ type: "blob" });
   saveAs(content, "MSF-Teachings.zip");
 }
 
 export function download(path: string, cleanName: string): void {
-  const downloadUrl = `https://msf-audios.nyc3.digitaloceanspaces.com/${path}`;
+  const downloadUrl = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${path}`;
   fetch(downloadUrl).then(async (response) => {
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
@@ -107,6 +118,7 @@ export async function upload(
   }
 
   const date = new Date(createdDate);
+  // TODO: encodeURIComponent
   let namedFile = new File(
     [file],
     `${date.getFullYear() - 2000}${(date.getMonth() + 1)
