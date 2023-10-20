@@ -47,10 +47,10 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
   const speaker = splitByUnderscores[2].split("-").join(" ");
   const totalSeconds = Number(splitByUnderscores[3]);
   const hours = Number(Math.floor(totalSeconds / 3600).toFixed(0));
-  const minutes = Math.floor((totalSeconds - hours * 60 * 60) / 60)
-    .toFixed(0)
-    .toString()
-    .padStart(2, "0");
+  let minutes = Math.floor((totalSeconds - hours * 60 * 60) / 60).toFixed(0);
+  if (hours) {
+    minutes = minutes.toString().padStart(2, "0");
+  }
   const seconds = (totalSeconds % 60).toString().padStart(2, "0");
   const extraInfo =
     splitByUnderscores.length === 5
@@ -71,7 +71,7 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     year: createdDate.year,
     month: createdDate.month,
     day: createdDate.day,
-    durationString: `${hours > 0 ? `${hours}:` : ""}${minutes}:${seconds}`,
+    durationString: `${hours ? `${hours}:` : ""}${minutes}:${seconds}`,
     speaker: speaker,
     extraInfo: extraInfo,
   };
@@ -92,4 +92,50 @@ export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   }
   usefulInfo.reverse();
   return usefulInfo;
+}
+
+export async function upload(
+  file: File | undefined,
+  speaker: string,
+  title: string,
+  seconds: string,
+  createdDate: string,
+  additionalInfo: string | null
+) {
+  if (!file || !speaker || !title || !seconds) {
+    return;
+  }
+
+  const date = new Date(createdDate);
+  let namedFile = new File(
+    [file],
+    `${date.getFullYear() - 2000}${(date.getMonth() + 1)
+      .toString()
+      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${title
+      .split(" ")
+      .join("-")}_${speaker.split(" ").join("-")}_${seconds}${
+      additionalInfo !== "" ? `_${additionalInfo}` : ""
+    }.mp3`
+  );
+
+  const res = await fetch("/api/upload", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      filename: namedFile.name,
+      length: namedFile.length,
+    }),
+  });
+  const json = await res.json();
+
+  fetch(json.url, {
+    method: "PUT",
+    body: namedFile,
+    headers: {
+      "Content-Type": "audio/mpeg",
+      "x-amz-acl": "public-read",
+    },
+  });
 }

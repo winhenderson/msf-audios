@@ -1,10 +1,11 @@
-import React, { useState, DragEvent, useEffect } from "react";
+import React, { useState, DragEvent } from "react";
 import {
   faCloudArrowUp,
   faFileArrowUp,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "@/components/Button";
+import { upload } from "@/lib/utils";
 
 const Upload: React.FC = () => {
   const today = new Date();
@@ -15,6 +16,7 @@ const Upload: React.FC = () => {
   const [seconds, setSeconds] = useState("");
   const [speaker, setSpeaker] = useState("");
   const [title, setTitle] = useState("");
+  const [additionalInfo, setAdditionalInfo] = useState("");
 
   return (
     <div className="p-2 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto max-w-[1000px]">
@@ -24,9 +26,9 @@ const Upload: React.FC = () => {
 
       <form
         onSubmit={(e) => e.preventDefault()}
-        onDragOver={handleDragOver}
-        onDragLeave={handleDragLeave}
-        onDrop={handleDrop}
+        onDragOver={handledragover}
+        onDragLeave={handledragleave}
+        onDrop={handledrop}
         className="mt-8"
       >
         <div className="flex flex-col gap-4">
@@ -57,17 +59,13 @@ const Upload: React.FC = () => {
               id="dropzone-file"
               type="file"
               className="opacity-0"
-              onChange={handleFileChange}
+              onChange={handlefilechange}
               required
             />
           </label>
 
           <section className={`${!file && "hidden"} flex flex-col gap-4`}>
-            <div
-              className={`${
-                file === undefined && "hidden"
-              } flex flex-col text-teal-950 gap-2`}
-            >
+            <div className="flex flex-col text-teal-950 gap-2">
               <label
                 htmlFor="title"
                 className="text-xs uppercase font-semibold text-teal-800"
@@ -87,11 +85,7 @@ const Upload: React.FC = () => {
               />
             </div>
 
-            <div
-              className={`${
-                file === undefined && "hidden"
-              } flex flex-col text-teal-950 gap-2`}
-            >
+            <div className="flex flex-col text-teal-950 gap-2">
               <label
                 htmlFor="created-date"
                 className="text-xs uppercase font-semibold text-teal-800"
@@ -111,11 +105,7 @@ const Upload: React.FC = () => {
               />
             </div>
 
-            <div
-              className={`${
-                file === undefined && "hidden"
-              } flex flex-col text-teal-950 gap-2`}
-            >
+            <div className="flex flex-col text-teal-950 gap-2">
               <label
                 className="text-xs uppercase font-semibold text-teal-800"
                 htmlFor="length-in-seconds"
@@ -135,11 +125,7 @@ const Upload: React.FC = () => {
               />
             </div>
 
-            <div
-              className={`${
-                file === undefined && "hidden"
-              } flex flex-col text-teal-950 gap-2`}
-            >
+            <div className="flex flex-col text-teal-950 gap-2">
               <label
                 className="text-xs uppercase font-semibold text-teal-800"
                 htmlFor="speaker"
@@ -159,53 +145,42 @@ const Upload: React.FC = () => {
               />
             </div>
 
+            <div className="flex flex-col text-teal-950 gap-2">
+              <label
+                className="text-xs uppercase font-semibold text-teal-800"
+                htmlFor="additional"
+              >
+                Additional Information:
+              </label>
+              <input
+                type="text"
+                id="additional"
+                value={additionalInfo}
+                onChange={(e) => {
+                  e.preventDefault();
+                  setAdditionalInfo(e.target.value);
+                }}
+                className="bg-gradient-to-br from-teal-700/25 to-teal-950/25 bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2"
+              />
+            </div>
+
             <Button
               type="button"
               buttonType="submit"
-              onClick={async () => {
-                if (!file || !speaker || !title || !seconds) {
-                  return;
-                }
-
-                const date = new Date(createdDate);
-                let namedFile = new File(
-                  [file],
-                  `${date.getFullYear() - 2000}${(date.getMonth() + 1)
-                    .toString()
-                    .padStart(2, "0")}${date
-                    .getDate()
-                    .toString()
-                    .padStart(2, "0")}_${title.split(" ").join("-")}_${speaker
-                    .split(" ")
-                    .join("-")}_${seconds}.mp3`
+              onClick={() => {
+                upload(
+                  file,
+                  speaker,
+                  title,
+                  seconds,
+                  createdDate,
+                  additionalInfo
                 );
-
-                const res = await fetch("/api/upload", {
-                  method: "POST",
-                  headers: {
-                    "Content-Type": "application/json",
-                  },
-                  body: JSON.stringify({
-                    filename: namedFile.name,
-                    length: namedFile.length,
-                  }),
-                });
-                const json = await res.json();
-
-                fetch(json.url, {
-                  method: "PUT",
-                  body: namedFile,
-                  headers: {
-                    "Content-Type": "audio/mpeg",
-                    "x-amz-acl": "public-read",
-                  },
-                });
-
                 clearState();
               }}
               className="mt-4"
             >
-              Upload File
+              upload file
               <FontAwesomeIcon icon={faFileArrowUp} className="ml-2" />
             </Button>
           </section>
@@ -220,25 +195,26 @@ const Upload: React.FC = () => {
     setSeconds("");
     setSpeaker("");
     setTitle("");
+    setAdditionalInfo("");
   }
 
-  function handleDragOver(event: DragEvent) {
+  function handledragover(event: DragEvent) {
     event.preventDefault();
   }
 
-  function handleDragLeave(event: DragEvent) {
+  function handledragleave(event: DragEvent) {
     event.preventDefault();
   }
 
-  function handleDrop(event: DragEvent) {
+  function handledrop(event: DragEvent) {
     event.preventDefault();
 
-    // Fetch the files
-    const droppedFiles = Array.from(event.dataTransfer.files);
-    setFile(droppedFiles[0]);
+    // fetch the files
+    const droppedfiles = Array.from(event.dataTransfer.files);
+    setFile(droppedfiles[0]);
   }
 
-  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handlefilechange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
