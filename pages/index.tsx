@@ -73,46 +73,54 @@ export function Page({
 
         <FileList usefulInfo={usefulInfo} />
       </div>
+
       {podcastInfoShown && (
-        <div className="w-2/3 bg-gradient-to-br flex flex-col from-slate-200 to-teal-600 drop-shadow-lg p-8 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 text-teal-950 rounded-xl">
-          <h2 className="font-bold text-lg mb-4">
-            The URL for the MSF Teachings podcast is copied to your clipboard.
-          </h2>
-          <div className="flex justify-between font-bold mb-4">
-            <div>
-              <h3>Apple Podcasts</h3>
-              <ul className="text-teal-900 font-medium list-disc list-inside pl-2">
-                <li>Open the Podcast app</li>
-                <li>In the menu bar of your computer open the "File" tab</li>
-                <li>Select "Follow a Show by URL"</li>
-                <li>In the popup paste in the URL</li>
-                <li>Enjoy!</li>
-              </ul>
+        <div
+          className="w-screen h-screen  absolute top-0"
+          onClick={() => setPodcastInfoShown(false)}
+        >
+          <div className="w-2/3 bg-gradient-to-br flex flex-col from-slate-200 to-teal-600 drop-shadow-lg p-8 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2 z-10 text-teal-950 rounded-xl">
+            <h2 className="font-bold text-lg mb-4">
+              The URL for the MSF Teachings podcast is copied to your clipboard.
+            </h2>
+            <div className="flex justify-between font-bold mb-4">
+              <div>
+                <h3>Apple Podcasts</h3>
+                <ul className="text-teal-900 font-medium list-disc list-inside pl-2">
+                  <li>Open the Podcast app</li>
+                  <li>In the menu bar of your computer open the "File" tab</li>
+                  <li>Select "Follow a Show by URL"</li>
+                  <li>In the popup paste in the URL</li>
+                  <li>Enjoy!</li>
+                </ul>
+              </div>
+              <div>
+                <h3>Google Podcasts</h3>
+                <ul className="text-teal-900 font-medium list-disc list-inside pl-2">
+                  <li>Open the Google Podcasts app</li>
+                  <li>
+                    At the bottom, tap "Activity" and then "Subscriptions"
+                  </li>
+                  <li>
+                    Tap "More" <FontAwesomeIcon icon={faEllipsisVertical} />
+                  </li>
+                  <li>Paste in the URL</li>
+                  <li>Tap "Subscribe"</li>
+                  <li>Enjoy!</li>
+                </ul>
+              </div>
             </div>
-            <div>
-              <h3>Google Podcasts</h3>
-              <ul className="text-teal-900 font-medium list-disc list-inside pl-2">
-                <li>Open the Google Podcasts app</li>
-                <li>At the bottom, tap "Activity" and then "Subscriptions"</li>
-                <li>
-                  Tap "More" <FontAwesomeIcon icon={faEllipsisVertical} />
-                </li>
-                <li>Paste in the URL</li>
-                <li>Tap "Subscribe"</li>
-                <li>Enjoy!</li>
-              </ul>
-            </div>
+            <Button
+              type="button"
+              buttonType="button"
+              className="shadow-teal-800"
+              onClick={() => {
+                setPodcastInfoShown(false);
+              }}
+            >
+              Close
+            </Button>
           </div>
-          <Button
-            type="button"
-            buttonType="button"
-            className="shadow-teal-800"
-            onClick={() => {
-              setPodcastInfoShown(false);
-            }}
-          >
-            Close
-          </Button>
         </div>
       )}
     </>
