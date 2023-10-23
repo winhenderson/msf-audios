@@ -23,7 +23,7 @@ export function Page({
   usefulInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [downloading, setDownloading] = useState(false);
-  const [podcastInfoShown, setPodcastInfoShown] = useState(true);
+  const [podcastInfoShown, setPodcastInfoShown] = useState(false);
 
   return (
     <>
@@ -42,10 +42,10 @@ export function Page({
             buttonType="button"
             onClick={async () => {
               setDownloading(true);
-              // TODO: disable button
               await downloadAll(usefulInfo);
               setDownloading(false);
             }}
+            disabled={downloading}
           >
             {downloading ? (
               "Downloading..."
