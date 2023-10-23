@@ -1,4 +1,4 @@
-import React, { HTMLInputTypeAttribute, ReactNode } from "react";
+import React, { HTMLInputTypeAttribute, ReactNode, useId } from "react";
 
 type Props = {
   type: HTMLInputTypeAttribute;
@@ -15,7 +15,7 @@ const Input: React.FC<Props> = ({
   required = false,
   children,
 }) => {
-  const id = crypto.randomUUID();
+  const id = useId();
   return (
     <div className="flex flex-col text-teal-950 gap-2">
       <label
