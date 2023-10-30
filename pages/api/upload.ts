@@ -16,8 +16,6 @@ export default async function handler(
   });
 
   const fileInfo = req.body;
-  console.log(fileInfo);
-  console.log(fileInfo.length);
 
   const command = new PutObjectCommand({
     Bucket: "msf-audios",
@@ -27,8 +25,6 @@ export default async function handler(
     ContentLength: fileInfo.length,
   });
 
-  const url = await getSignedUrl(client, command, { expiresIn: 17 * 60 * 60 });
-  console.log({ url });
-  console.log({ command });
+  const url = await getSignedUrl(client, command, { expiresIn: 60 * 60 });
   res.status(200).json({ url });
 }

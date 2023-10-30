@@ -131,8 +131,6 @@ export async function upload(
     )
   );
 
-  // console.log("length", namedFile.size);
-
   const res = await fetch("/api/upload", {
     method: "POST",
     headers: {
@@ -145,7 +143,7 @@ export async function upload(
   });
   const json = await res.json();
 
-  fetch(json.url, {
+  await fetch(json.url, {
     method: "PUT",
     body: namedFile,
     headers: {

@@ -30,7 +30,10 @@ const Upload: React.FC = () => {
         <div className="text-teal-950 text-2xl text-bold p-4">Uploading...</div>
       ) : (
         <form
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
           onDragOver={handledragover}
           onDragLeave={handledragleave}
           onDrop={handledrop}
@@ -107,25 +110,10 @@ const Upload: React.FC = () => {
               <Button
                 type="button"
                 buttonType="submit"
-                onClick={async () => {
-                  if (title && speaker && seconds && createdDate) {
-                    setUploading(true);
-                    await upload(
-                      file,
-                      speaker,
-                      title,
-                      seconds,
-                      createdDate,
-                      additionalInfo
-                    );
-                    setTimeout(() => {
-                      window.location.href = "/";
-                    }, 5000);
-                  }
-                }}
+                onClick={onSubmit}
                 className="mt-4"
               >
-                upload file
+                Upload File
                 <FontAwesomeIcon icon={faFileArrowUp} className="ml-2" />
               </Button>
             </section>
@@ -134,6 +122,12 @@ const Upload: React.FC = () => {
       )}
     </div>
   );
+
+  async function onSubmit() {
+    setUploading(true);
+    await upload(file, speaker, title, seconds, createdDate, additionalInfo);
+    window.location.href = "/";
+  }
 
   function handledragover(event: DragEvent) {
     event.preventDefault();

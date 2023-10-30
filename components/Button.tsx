@@ -39,6 +39,7 @@ const Button: React.FC<Props> = ({
         className={classes}
         onClick={(e) => {
           e.stopPropagation();
+          e.preventDefault();
           props.onClick();
         }}
         id={small ? "download file" : ""}
