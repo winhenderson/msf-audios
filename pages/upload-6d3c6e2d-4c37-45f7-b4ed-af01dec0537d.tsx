@@ -108,18 +108,20 @@ const Upload: React.FC = () => {
                 type="button"
                 buttonType="submit"
                 onClick={async () => {
-                  setUploading(true);
-                  await upload(
-                    file,
-                    speaker,
-                    title,
-                    seconds,
-                    createdDate,
-                    additionalInfo
-                  );
-                  setTimeout(() => {
-                    window.location.href = "/";
-                  }, 5000);
+                  if (title && speaker && seconds && createdDate) {
+                    setUploading(true);
+                    await upload(
+                      file,
+                      speaker,
+                      title,
+                      seconds,
+                      createdDate,
+                      additionalInfo
+                    );
+                    setTimeout(() => {
+                      window.location.href = "/";
+                    }, 5000);
+                  }
                 }}
                 className="mt-4"
               >
@@ -132,15 +134,6 @@ const Upload: React.FC = () => {
       )}
     </div>
   );
-
-  // function clearState() {
-  //   setCreatedDate(new Date().toISOString().slice(0, 10));
-  //   setFile(undefined);
-  //   setSeconds("");
-  //   setSpeaker("");
-  //   setTitle("");
-  //   setAdditionalInfo("");
-  // }
 
   function handledragover(event: DragEvent) {
     event.preventDefault();

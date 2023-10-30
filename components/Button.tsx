@@ -29,7 +29,8 @@ const Button: React.FC<Props> = ({
     small
       ? "rounded-full w-10 h-10 text-teal-900 bg-gray-50 hover:text-opacity-70"
       : "text-white rounded-lg w-full h-12 bg-gradient-to-br from-teal-700 to-teal-950 hover:from-teal-700 hover:to-teal-900 hover:text-opacity-80",
-    disabled && "opacity-30 cursor-progress"
+    disabled && !small && "opacity-30 cursor-progress",
+    disabled && small && "cursor-progress"
   );
 
   if (props.type === "button") {

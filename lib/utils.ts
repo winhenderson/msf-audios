@@ -24,9 +24,9 @@ export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   saveAs(content, "MSF-Teachings.zip");
 }
 
-export function download(path: string, cleanName: string): void {
+export async function download(path: string, cleanName: string): Promise<void> {
   const downloadUrl = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${path}`;
-  fetch(downloadUrl).then(async (response) => {
+  return fetch(downloadUrl).then(async (response) => {
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -93,7 +93,7 @@ export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const promisedData: MetaData[] = [];
   for (const file of fileNames) {
     if (!file.endsWith(".png")) {
-      promisedData.push(metaData(file));
+      promisedData.push(metaData(decodeURIComponent(file)));
     }
   }
   const data = await Promise.all(promisedData);
@@ -118,17 +118,20 @@ export async function upload(
   }
 
   const date = new Date(createdDate);
-  // TODO: encodeURIComponent
   let namedFile = new File(
     [file],
-    `${date.getFullYear() - 2000}${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${title
-      .split(" ")
-      .join("-")}_${speaker.split(" ").join("-")}_${seconds}${
-      additionalInfo !== "" ? `_${additionalInfo}` : ""
-    }.mp3`
+    encodeURI(
+      `${date.getFullYear() - 2000}${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${title
+        .split(" ")
+        .join("-")}_${speaker.split(" ").join("-")}_${seconds}${
+        additionalInfo !== "" ? `_${additionalInfo}` : ""
+      }.mp3`
+    )
   );
+
+  // console.log("length", namedFile.size);
 
   const res = await fetch("/api/upload", {
     method: "POST",
@@ -137,7 +140,7 @@ export async function upload(
     },
     body: JSON.stringify({
       filename: namedFile.name,
-      length: namedFile.length,
+      length: namedFile.size,
     }),
   });
   const json = await res.json();
