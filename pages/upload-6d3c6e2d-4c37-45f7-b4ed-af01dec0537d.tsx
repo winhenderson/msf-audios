@@ -107,12 +107,7 @@ const Upload: React.FC = () => {
                 Additional Information
               </Input>
 
-              <Button
-                type="button"
-                buttonType="submit"
-                onClick={onSubmit}
-                className="mt-4"
-              >
+              <Button type="button" onClick={onSubmit} className="mt-4">
                 Upload File
                 <FontAwesomeIcon icon={faFileArrowUp} className="ml-2" />
               </Button>

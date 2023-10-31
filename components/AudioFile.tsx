@@ -54,7 +54,6 @@ const AudioFile: React.FC<{ usefulInfo: UsefulInfo }> = ({ usefulInfo }) => {
 
       <Button
         type="button"
-        buttonType="button"
         onClick={handleDownload}
         disabled={downloading}
         small

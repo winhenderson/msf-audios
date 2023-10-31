@@ -1,26 +1,24 @@
 import React from "react";
 import cx from "classnames";
 
-type CommonProps = {
+type Props = {
   className?: string;
   small?: boolean;
   disabled?: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  href?: string;
+  type?: "submit" | "button";
+  onClick?: () => void;
 };
-
-type Props =
-  | ({
-      type: "button";
-      buttonType: "submit" | "button";
-      onClick(): void;
-    } & CommonProps)
-  | ({ type: "external"; href: string } & CommonProps);
 
 const Button: React.FC<Props> = ({
   className,
   small = false,
   disabled = false,
-  ...props
+  href,
+  type,
+  onClick,
+  children,
 }) => {
   const classes = cx(
     `text-opacity-95 flex items-center justify-center uppercase font-bold tracking-wide  transition-colors`,
@@ -33,27 +31,25 @@ const Button: React.FC<Props> = ({
     disabled && small && "cursor-progress"
   );
 
-  if (props.type === "button") {
-    return (
-      <button
-        className={classes}
-        onClick={(e) => {
-          e.stopPropagation();
-          e.preventDefault();
-          props.onClick();
-        }}
-        id={small ? "download file" : ""}
-        type={props.buttonType}
-        disabled={disabled}
-      >
-        {props.children}
-      </button>
-    );
-  }
+  const Tag = typeof href === "string" ? "a" : "button";
+
   return (
-    <a href={props.href} className={classes}>
-      {props.children}
-    </a>
+    <Tag
+      className={classes}
+      onClick={(e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        if (onClick) {
+          onClick();
+        }
+      }}
+      id={small ? "download file" : ""}
+      type={type}
+      disabled={disabled}
+      href={href}
+    >
+      {children}
+    </Tag>
   );
 };
 
