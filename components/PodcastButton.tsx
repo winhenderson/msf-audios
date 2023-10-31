@@ -13,7 +13,7 @@ const PodcastButton: React.FC<Props> = ({ type }) => {
       href={
         type === "apple"
           ? "https://podcasts.apple.com/us/podcast/msf-teachings/id1714317230"
-          : ""
+          : "https://open.spotify.com/show/3NZr6LqdqtslWOXdIiKkdi"
       }
       className={cx(
         "bg-none bg-white hover:bg-gray-50 flex gap-2 min-w-fit px-2 tracking-normal normal-case"

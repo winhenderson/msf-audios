@@ -17,7 +17,7 @@ export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
       />
       <title>MSF Teachings</title>
       <itunes:subtitle>Teachings from some great people at MSF</itunes:subtitle>
-      <link>https://audios.marketstreetfellowship.com/api/podcast</link>
+      <link>https://audios.marketstreetfellowship.com</link>
       <language>en</language>
       <itunes:author>MSF</itunes:author>
       <description>Teachings from some great people at MSF</description>

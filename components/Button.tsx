@@ -38,9 +38,9 @@ const Button: React.FC<Props> = ({
     <Tag
       className={classes}
       onClick={(e) => {
-        e.stopPropagation();
-        e.preventDefault();
         if (onClick) {
+          e.stopPropagation();
+          e.preventDefault();
           onClick();
         }
       }}
