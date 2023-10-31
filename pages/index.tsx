@@ -24,14 +24,12 @@ export function Page({
   usefulInfo,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [downloading, setDownloading] = useState(false);
-  const [podcastInfoShown, setPodcastInfoShown] = useState(true);
+  // const [podcastInfoShown, setPodcastInfoShown] = useState(false);
 
   return (
     <>
       <div
-        className={`p-2 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto max-w-[1000px] ${
-          podcastInfoShown && "blur-sm"
-        }`}
+        className={`p-2 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto max-w-[1000px]`}
       >
         <h1 className="w-full text-5xl text-teal-950 text-center border-b-teal-500 border-b font-extrabold p-2 mb-2">
           MSF Teachings
@@ -56,7 +54,7 @@ export function Page({
               </>
             )}
           </Button>
-          <Button
+          {/* <Button
             type="button"
             onClick={() => {
               navigator.clipboard.writeText(
@@ -67,13 +65,13 @@ export function Page({
           >
             Podcast
             <FontAwesomeIcon icon={faPodcast} className="ml-2" />
-          </Button>
+          </Button> */}
         </div>
 
         <FileList usefulInfo={usefulInfo} />
       </div>
 
-      {podcastInfoShown && (
+      {/* {podcastInfoShown && (
         <div
           className="w-screen h-screen absolute top-0"
           onClick={() => setPodcastInfoShown(false)}
@@ -124,7 +122,7 @@ export function Page({
             </div>
           </div>
         </div>
-      )}
+      )} */}
     </>
   );
 }
