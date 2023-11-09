@@ -7,7 +7,9 @@ export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   const zip = new JSZip();
   const promises: Array<Promise<[Blob, string]>> = [];
   for (const { fileName, cleanName } of usefulInfo) {
-    const url = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${fileName}`;
+    const url = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${encodeURI(
+      fileName
+    )}`;
     promises.push(
       fetch(url)
         .then((res) => res.blob())
@@ -25,7 +27,9 @@ export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
 }
 
 export async function download(path: string, cleanName: string): Promise<void> {
-  const downloadUrl = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${path}`;
+  const downloadUrl = `${
+    process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT
+  }/${encodeURI(path)}`;
   return fetch(downloadUrl).then(async (response) => {
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
@@ -84,9 +88,11 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     day: createdDate.day,
     durationString: `${hours ? `${hours}:` : ""}${minutes}:${seconds}`,
     speaker: speaker,
-    extraInfo: extraInfo,
+    extraInfo: extraInfo ? decodeURIComponent(extraInfo) : null,
   };
 }
+//https://msf-audios.nyc3.digitaloceanspaces.com/231030_Rad-title_Bob-Smith_234234_oh%20so%20good.mp3
+//https://msf-audios.nyc3.digitaloceanspaces.com/231030_Rad-title_Bob-Smith_234234_oh%2520so%2520good.mp3
 
 export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const fileNames = await listObjects("");
@@ -100,9 +106,7 @@ export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const data = await Promise.all(promisedData);
   const usefulInfo = [];
   for (let i = 0; i < promisedData.length; i++) {
-    usefulInfo.push(
-      getData(decodeURIComponent(fileNames[i]), data[i].ContentLength ?? 0)
-    );
+    usefulInfo.push(getData(fileNames[i], data[i].ContentLength ?? 0));
   }
   usefulInfo.reverse();
   return usefulInfo;
