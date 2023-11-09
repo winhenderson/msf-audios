@@ -90,16 +90,19 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
 
 export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const fileNames = await listObjects("");
+
   const promisedData: MetaData[] = [];
   for (const file of fileNames) {
     if (!file.endsWith(".png")) {
-      promisedData.push(metaData(decodeURIComponent(file)));
+      promisedData.push(metaData(file));
     }
   }
   const data = await Promise.all(promisedData);
   const usefulInfo = [];
   for (let i = 0; i < promisedData.length; i++) {
-    usefulInfo.push(await getData(fileNames[i], data[i].ContentLength ?? 0));
+    usefulInfo.push(
+      getData(decodeURIComponent(fileNames[i]), data[i].ContentLength ?? 0)
+    );
   }
   usefulInfo.reverse();
   return usefulInfo;
