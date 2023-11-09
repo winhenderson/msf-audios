@@ -1,4 +1,4 @@
-import React, { HTMLInputTypeAttribute, ReactNode } from "react";
+import React, { HTMLInputTypeAttribute, ReactNode, useId } from "react";
 
 type Props = {
   type: HTMLInputTypeAttribute;
@@ -15,7 +15,8 @@ const Input: React.FC<Props> = ({
   required = false,
   children,
 }) => {
-  const id = crypto.randomUUID();
+  const id = useId();
+
   return (
     <div className="flex flex-col text-teal-950 gap-2">
       <label
@@ -25,9 +26,10 @@ const Input: React.FC<Props> = ({
         {children}:
       </label>
       <input
+        autoFocus={children === "Title" && true}
         type={type}
         id={id}
-        className="bg-gradient-to-br from-teal-700/25 to-teal-950/25 bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2"
+        className="bg-gradient-to-br from-slate-200/25 to-teal-200/25 drop-shadow-sm bg-opacity-30 rounded-lg p-4 focus:outline-none focus:ring-teal-300 focus:ring-2 focus:ring-offset-2 border-[1px] border-teal-900/25"
         value={value}
         onChange={(e) => {
           e.preventDefault();

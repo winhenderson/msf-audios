@@ -1,16 +1,24 @@
 import Image from "next/image";
-import React from "react";
+import React, { useState } from "react";
 import Button from "./Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCloudArrowDown } from "@fortawesome/free-solid-svg-icons";
-import { download, getData } from "@/lib/utils";
+import { faCloudArrowDown, faSpinner } from "@fortawesome/free-solid-svg-icons";
+import { download } from "@/lib/utils";
 import { UsefulInfo } from "@/lib/types";
 
 const AudioFile: React.FC<{ usefulInfo: UsefulInfo }> = ({ usefulInfo }) => {
+  const [downloading, setDownloading] = useState(false);
+
+  async function handleDownload() {
+    setDownloading(true);
+    await download(usefulInfo.fileName, usefulInfo.cleanName);
+    setDownloading(false);
+  }
+
   return (
     <li
-      className="flex py-4 px-2 hover:text-teal-600 text-teal-950 hover:bg-teal-50 hover:transition-colors"
-      onClick={() => download(usefulInfo.fileName, usefulInfo.cleanName)}
+      className="flex py-4 items-center px-2 hover:text-teal-600 text-teal-950 hover:bg-teal-50 hover:transition-colors"
+      onClick={handleDownload}
     >
       <div className="w-12 h-12 min-w-max">
         <Image
@@ -46,11 +54,15 @@ const AudioFile: React.FC<{ usefulInfo: UsefulInfo }> = ({ usefulInfo }) => {
 
       <Button
         type="button"
-        buttonType="button"
-        onClick={() => download(usefulInfo.fileName, usefulInfo.cleanName)}
+        onClick={handleDownload}
+        disabled={downloading}
         small
       >
-        <FontAwesomeIcon icon={faCloudArrowDown} />
+        {downloading ? (
+          <FontAwesomeIcon icon={faSpinner} className="text-lg animate-spin" />
+        ) : (
+          <FontAwesomeIcon icon={faCloudArrowDown} />
+        )}
       </Button>
     </li>
   );

@@ -11,17 +11,17 @@ export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
   >
     <channel>
       <atom:link
-        href="https://msf-audios.vercel.app/podcast.rss"
+        href="https://audios.marketstreetfellowship.com"
         rel="self"
         type="application/rss+xml"
       />
       <title>MSF Teachings</title>
       <itunes:subtitle>Teachings from some great people at MSF</itunes:subtitle>
-      <link>https://msf-audios.vercel.app/podcast.rss</link>
+      <link>https://audios.marketstreetfellowship.com</link>
       <language>en</language>
       <itunes:author>MSF</itunes:author>
       <description>Teachings from some great people at MSF</description>
-      <itunes:summary>MSF Teachings</itunes:summary>
+      <itunes:summary>Teachings from some great people at MSF</itunes:summary>
       <itunes:explicit>false</itunes:explicit>
       <itunes:type>episodic</itunes:type>
       <itunes:owner>
@@ -32,7 +32,7 @@ export function podcastXML(usefulInfo: Array<UsefulInfo>): string {
       <image>
         <url>https://msf-audios.nyc3.digitaloceanspaces.com/MSF_Podcast.png</url>
         <title>MSF Teachings</title>
-        <link>https://msf-audios.vercel.app/podcast.rss</link>
+        <link>https://audios.marketstreetfellowship.com/api/podcast</link>
       </image>
       <itunes:category text="Religion &amp; Spirituality">
         <itunes:category text="Christianity" />

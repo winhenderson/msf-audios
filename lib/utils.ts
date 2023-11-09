@@ -7,7 +7,9 @@ export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   const zip = new JSZip();
   const promises: Array<Promise<[Blob, string]>> = [];
   for (const { fileName, cleanName } of usefulInfo) {
-    const url = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${fileName}`;
+    const url = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${encodeURI(
+      fileName
+    )}`;
     promises.push(
       fetch(url)
         .then((res) => res.blob())
@@ -24,9 +26,11 @@ export async function downloadAll(usefulInfo: Array<UsefulInfo>) {
   saveAs(content, "MSF-Teachings.zip");
 }
 
-export function download(path: string, cleanName: string): void {
-  const downloadUrl = `${process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT}/${path}`;
-  fetch(downloadUrl).then(async (response) => {
+export async function download(path: string, cleanName: string): Promise<void> {
+  const downloadUrl = `${
+    process.env.NEXT_PUBLIC_CLOUD_DOWNLOAD_ENDPOINT
+  }/${encodeURI(path)}`;
+  return fetch(downloadUrl).then(async (response) => {
     const blob = await response.blob();
     const url = window.URL.createObjectURL(blob);
     const link = document.createElement("a");
@@ -84,12 +88,15 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     day: createdDate.day,
     durationString: `${hours ? `${hours}:` : ""}${minutes}:${seconds}`,
     speaker: speaker,
-    extraInfo: extraInfo,
+    extraInfo: extraInfo ? decodeURIComponent(extraInfo) : null,
   };
 }
+//https://msf-audios.nyc3.digitaloceanspaces.com/231030_Rad-title_Bob-Smith_234234_oh%20so%20good.mp3
+//https://msf-audios.nyc3.digitaloceanspaces.com/231030_Rad-title_Bob-Smith_234234_oh%2520so%2520good.mp3
 
 export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const fileNames = await listObjects("");
+
   const promisedData: MetaData[] = [];
   for (const file of fileNames) {
     if (!file.endsWith(".png")) {
@@ -99,7 +106,7 @@ export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const data = await Promise.all(promisedData);
   const usefulInfo = [];
   for (let i = 0; i < promisedData.length; i++) {
-    usefulInfo.push(await getData(fileNames[i], data[i].ContentLength ?? 0));
+    usefulInfo.push(getData(fileNames[i], data[i].ContentLength ?? 0));
   }
   usefulInfo.reverse();
   return usefulInfo;
@@ -118,16 +125,17 @@ export async function upload(
   }
 
   const date = new Date(createdDate);
-  // TODO: encodeURIComponent
   let namedFile = new File(
     [file],
-    `${date.getFullYear() - 2000}${(date.getMonth() + 1)
-      .toString()
-      .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${title
-      .split(" ")
-      .join("-")}_${speaker.split(" ").join("-")}_${seconds}${
-      additionalInfo !== "" ? `_${additionalInfo}` : ""
-    }.mp3`
+    encodeURI(
+      `${date.getFullYear() - 2000}${(date.getMonth() + 1)
+        .toString()
+        .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${title
+        .split(" ")
+        .join("-")}_${speaker.split(" ").join("-")}_${seconds}${
+        additionalInfo !== "" ? `_${additionalInfo}` : ""
+      }.mp3`
+    )
   );
 
   const res = await fetch("/api/upload", {
@@ -137,12 +145,12 @@ export async function upload(
     },
     body: JSON.stringify({
       filename: namedFile.name,
-      length: namedFile.length,
+      length: namedFile.size,
     }),
   });
   const json = await res.json();
 
-  fetch(json.url, {
+  await fetch(json.url, {
     method: "PUT",
     body: namedFile,
     headers: {

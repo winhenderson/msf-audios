@@ -30,7 +30,10 @@ const Upload: React.FC = () => {
         <div className="text-teal-950 text-2xl text-bold p-4">Uploading...</div>
       ) : (
         <form
-          onSubmit={(e) => e.preventDefault()}
+          onSubmit={(e) => {
+            e.preventDefault();
+            onSubmit();
+          }}
           onDragOver={handledragover}
           onDragLeave={handledragleave}
           onDrop={handledrop}
@@ -104,24 +107,8 @@ const Upload: React.FC = () => {
                 Additional Information
               </Input>
 
-              <Button
-                type="button"
-                buttonType="submit"
-                onClick={async () => {
-                  setUploading(true);
-                  await upload(
-                    file,
-                    speaker,
-                    title,
-                    seconds,
-                    createdDate,
-                    additionalInfo
-                  );
-                  window.location.href = "/";
-                }}
-                className="mt-4"
-              >
-                upload file
+              <Button type="button" onClick={onSubmit} className="mt-4">
+                Upload File
                 <FontAwesomeIcon icon={faFileArrowUp} className="ml-2" />
               </Button>
             </section>
@@ -131,13 +118,10 @@ const Upload: React.FC = () => {
     </div>
   );
 
-  function clearState() {
-    setCreatedDate(new Date().toISOString().slice(0, 10));
-    setFile(undefined);
-    setSeconds("");
-    setSpeaker("");
-    setTitle("");
-    setAdditionalInfo("");
+  async function onSubmit() {
+    setUploading(true);
+    await upload(file, speaker, title, seconds, createdDate, additionalInfo);
+    window.location.href = "/";
   }
 
   function handledragover(event: DragEvent) {
