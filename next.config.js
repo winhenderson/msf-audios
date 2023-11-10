@@ -6,6 +6,11 @@ const nextConfig = {
 
     return config;
   },
+  images: {
+    remotePatterns: [
+      { protocol: "https", hostname: "avatars.githubusercontent.com" },
+    ],
+  },
   transpilePackages: ["x-ts-utils"],
 };
 

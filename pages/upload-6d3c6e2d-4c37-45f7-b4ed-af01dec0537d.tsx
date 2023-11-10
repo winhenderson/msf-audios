@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "@/components/Button";
 import { upload } from "@/lib/utils";
 import Input from "@/components/Input";
+import { signIn, signOut, useSession } from "next-auth/react";
+import Image from "next/image";
 
 const Upload: React.FC = () => {
   const today = new Date();
@@ -20,8 +22,40 @@ const Upload: React.FC = () => {
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  const { data: session } = useSession();
+
+  const authenticatedEmails = [
+    "winhenderson@gmail.com",
+    "henderjay@gmail.com",
+    "jared@netrivet.com",
+  ];
+  if (!authenticatedEmails.includes(session?.user?.email ?? "")) {
+    return (
+      <div className="bg-teal-50 w-screen h-screen">
+        <div className="rounded-lg shadow-lg shadow-teal-800/25 absolute left-1/2 top-20 -translate-x-1/2 w-3/4 flex flex-col items-center bg-gradient-to-br from-teal-500 via-teal-200 to-teal-950 p-10 sm:w-96">
+          <Image
+            src="/github-mark.png"
+            width={100}
+            height={100}
+            alt="GitHub invertocat logo"
+          />
+          <h3 className="text-xl mb-4 font-bold text-teal-950">
+            Sign in with GitHub
+          </h3>
+          <Button
+            onClick={() => signIn("github")}
+            className="shadow-teal-800"
+            type="button"
+          >
+            Sign in
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="p-2 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 m-auto max-w-[1000px]">
+    <div className="m-auto w-full p-3 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 max-w-[1000px] gap-8">
       <h1 className="w-full text-5xl text-teal-950 text-center border-b-teal-500 border-b font-extrabold p-2 mb-2">
         Upload Teaching
       </h1>
@@ -37,23 +71,23 @@ const Upload: React.FC = () => {
           onDragOver={handledragover}
           onDragLeave={handledragleave}
           onDrop={handledrop}
-          className="mt-8"
+          className="flex flex-col items-center"
         >
           <div className="flex flex-col gap-4">
             <label
               htmlFor="dropzone-file"
-              className={`flex flex-col items-center justify-center px-8 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-teal-50 bg-opacity-40  text-teal-950 ${
-                file ? "bg-teal-100 p-4" : "bg-teal-50 py-10"
+              className={`flex flex-col items-center justify-center p-12 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-teal-50 bg-opacity-40  text-teal-950 ${
+                file && "bg-teal-100 p-4"
               }`}
             >
-              <div className="flex flex-col items-center justify-center pt-5">
+              <div className="flex flex-col items-center justify-center">
                 {!file && (
                   <>
                     <FontAwesomeIcon
                       icon={faCloudArrowUp}
                       className="w-16 h-16"
                     />
-                    <div className="mb-2 text-sm opacity-70">
+                    <div className="text-sm opacity-70">
                       <span className="font-semibold">Click to upload</span> or
                       drag and drop
                     </div>
@@ -63,14 +97,14 @@ const Upload: React.FC = () => {
                   {file?.name}
                 </div>
               </div>
-              <input
-                id="dropzone-file"
-                type="file"
-                className="opacity-0"
-                onChange={handlefilechange}
-                required
-              />
             </label>
+            <input
+              id="dropzone-file"
+              type="file"
+              className="hidden"
+              onChange={handlefilechange}
+              required
+            />
 
             <section className={`${!file && "hidden"} flex flex-col gap-4`}>
               <Input type="text" value={title} setValue={setTitle} required>
@@ -113,6 +147,21 @@ const Upload: React.FC = () => {
               </Button>
             </section>
           </div>
+
+          <Button
+            onClick={() => signOut()}
+            type="button"
+            className="w-44 mt-4 bg-gray-800 bg-none"
+          >
+            <Image
+              src={session?.user?.image ?? ""}
+              width={27}
+              height={27}
+              alt="github avatar"
+              className="mr-2 rounded-full"
+            />
+            Sign Out
+          </Button>
         </form>
       )}
     </div>
