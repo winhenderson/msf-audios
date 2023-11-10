@@ -123,6 +123,7 @@ export async function upload(
   }
 
   const date = new Date(createdDate);
+  date.setDate(date.getDate() + 1);
   let namedFile = new File(
     [file],
     encodeURI(
