@@ -2,6 +2,7 @@ import React, { useState, DragEvent } from "react";
 import {
   faCloudArrowUp,
   faFileArrowUp,
+  faSpinner,
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Button from "@/components/Button";
@@ -55,13 +56,16 @@ const Upload: React.FC = () => {
   }
 
   return (
-    <div className="m-auto w-full p-3 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 max-w-[1000px] gap-8">
+    <div className="m-auto p-3 pt-4 flex flex-col items-center xs:px-4 sm:w-3/4 max-w-[1000px] gap-8">
       <h1 className="w-full text-5xl text-teal-950 text-center border-b-teal-500 border-b font-extrabold p-2 mb-2">
         Upload Teaching
       </h1>
 
       {uploading ? (
-        <div className="text-teal-950 text-2xl text-bold p-4">Uploading...</div>
+        <div className="p-4 flex flex-col items-center text-teal-950">
+          <div className="text-2xl font-bold ">Uploading</div>
+          <FontAwesomeIcon icon={faSpinner} className="text-xl animate-spin" />
+        </div>
       ) : (
         <form
           onSubmit={(e) => {
@@ -71,13 +75,15 @@ const Upload: React.FC = () => {
           onDragOver={handledragover}
           onDragLeave={handledragleave}
           onDrop={handledrop}
-          className="flex flex-col items-center"
+          className="flex flex-col items-center grow w-full px-2 max-w-[500px]"
         >
-          <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-4 w-full">
             <label
               htmlFor="dropzone-file"
-              className={`flex flex-col items-center justify-center p-12 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-teal-50 bg-opacity-40  text-teal-950 ${
-                file && "bg-teal-100 p-4"
+              className={`flex flex-col items-center justify-center p-12 border-teal-900/25 rounded-lg cursor-pointer bg-teal-50 bg-opacity-40  text-teal-950 ${
+                file
+                  ? "bg-teal-100 py-6 border-solid border"
+                  : "border-dashed border-2"
               }`}
             >
               <div className="flex flex-col items-center justify-center">
@@ -140,28 +146,33 @@ const Upload: React.FC = () => {
               >
                 Additional Information
               </Input>
-
-              <Button type="button" onClick={onSubmit} className="mt-4">
-                Upload File
-                <FontAwesomeIcon icon={faFileArrowUp} className="ml-2" />
-              </Button>
             </section>
           </div>
 
-          <Button
-            onClick={() => signOut()}
-            type="button"
-            className="w-44 mt-4 bg-gray-800 bg-none"
-          >
-            <Image
-              src={session?.user?.image ?? ""}
-              width={27}
-              height={27}
-              alt="github avatar"
-              className="mr-2 rounded-full"
-            />
-            Sign Out
-          </Button>
+          <div className="mt-4 flex flex-col w-full gap-2 xs:flex-row">
+            <Button
+              type="button"
+              onClick={onSubmit}
+              className={`${!file && "hidden"}`}
+            >
+              Upload File
+              <FontAwesomeIcon icon={faFileArrowUp} className="ml-2" />
+            </Button>
+            <Button
+              onClick={() => signOut()}
+              type="button"
+              className={`bg-gray-800 bg-none ${!file && "mt-6"}`}
+            >
+              <Image
+                src={session?.user?.image ?? ""}
+                width={27}
+                height={27}
+                alt="github avatar"
+                className="mr-2 rounded-full"
+              />
+              Sign Out
+            </Button>
+          </div>
         </form>
       )}
     </div>
