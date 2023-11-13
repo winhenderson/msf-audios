@@ -18,7 +18,7 @@ export default async function handler(
   const fileInfo = req.body;
 
   const command = new PutObjectCommand({
-    Bucket: "msf-audios",
+    Bucket: process.env.CLOUD_STORAGE_BUCKET,
     Key: fileInfo.filename,
     ContentType: "audio/mpeg",
     ACL: "public-read",

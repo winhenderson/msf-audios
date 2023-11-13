@@ -91,8 +91,6 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     extraInfo: extraInfo ? decodeURIComponent(extraInfo) : null,
   };
 }
-//https://msf-audios.nyc3.digitaloceanspaces.com/231030_Rad-title_Bob-Smith_234234_oh%20so%20good.mp3
-//https://msf-audios.nyc3.digitaloceanspaces.com/231030_Rad-title_Bob-Smith_234234_oh%2520so%2520good.mp3
 
 export async function getUsefulInfo(): Promise<Array<UsefulInfo>> {
   const fileNames = await listObjects("");
@@ -125,6 +123,7 @@ export async function upload(
   }
 
   const date = new Date(createdDate);
+  date.setDate(date.getDate() + 1);
   let namedFile = new File(
     [file],
     encodeURI(
