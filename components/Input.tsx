@@ -6,6 +6,7 @@ type Props = {
   setValue(newValue: string): void;
   required?: boolean;
   children: ReactNode;
+  className?: string;
 };
 
 const Input: React.FC<Props> = ({
@@ -14,11 +15,12 @@ const Input: React.FC<Props> = ({
   setValue,
   required = false,
   children,
+  className,
 }) => {
   const id = useId();
 
   return (
-    <div className="flex flex-col text-teal-950 gap-2">
+    <div className={`flex flex-col text-teal-950 gap-2 ${className}`}>
       <label
         htmlFor={id}
         className="text-xs uppercase font-semibold text-teal-800"

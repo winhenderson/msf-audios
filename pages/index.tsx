@@ -44,8 +44,8 @@ export function Page({
               "Downloading..."
             ) : (
               <>
+                <FontAwesomeIcon icon={faCloudArrowDown} className="mr-2" />
                 <span>Download All</span>
-                <FontAwesomeIcon icon={faCloudArrowDown} className="ml-2" />
               </>
             )}
           </Button>

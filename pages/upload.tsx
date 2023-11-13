@@ -17,6 +17,7 @@ const Upload: React.FC = () => {
   const [createdDate, setCreatedDate] = useState(
     today.toISOString().slice(0, 10)
   );
+  const [minutes, setMinutes] = useState("");
   const [seconds, setSeconds] = useState("");
   const [speaker, setSpeaker] = useState("");
   const [title, setTitle] = useState("");
@@ -72,10 +73,8 @@ const Upload: React.FC = () => {
             e.preventDefault();
             onSubmit();
           }}
-          onDragOver={handledragover}
-          onDragLeave={handledragleave}
-          onDrop={handledrop}
-          className="flex flex-col items-center grow w-full px-2 max-w-[500px]"
+          onDrop={handleDrop}
+          className="flex flex-col items-center px-2 w-full max-w-[500px]"
         >
           <div className="flex flex-col gap-4 w-full">
             <label
@@ -112,7 +111,7 @@ const Upload: React.FC = () => {
               required
             />
 
-            <section className={`${!file && "hidden"} flex flex-col gap-4`}>
+            <section className={`${!file ? "hidden" : ""} flex flex-col gap-4`}>
               <Input type="text" value={title} setValue={setTitle} required>
                 Title
               </Input>
@@ -126,14 +125,27 @@ const Upload: React.FC = () => {
                 Teaching Date
               </Input>
 
-              <Input
-                type="number"
-                value={seconds}
-                setValue={setSeconds}
-                required
-              >
-                Length in Seconds
-              </Input>
+              <div className="flex gap-2">
+                <Input
+                  type="number"
+                  value={minutes}
+                  setValue={setMinutes}
+                  required
+                  className="w-1/3 grow"
+                >
+                  Minutes
+                </Input>
+
+                <Input
+                  type="number"
+                  value={seconds}
+                  setValue={setSeconds}
+                  required
+                  className="w-1/3 grow"
+                >
+                  Seconds
+                </Input>
+              </div>
 
               <Input type="text" value={speaker} setValue={setSpeaker} required>
                 Speaker
@@ -149,14 +161,14 @@ const Upload: React.FC = () => {
             </section>
           </div>
 
-          <div className="mt-4 flex flex-col w-full gap-2 xs:flex-row">
+          <div className="mt-4 w-full flex flex-col gap-2 xs:flex-row">
             <Button
               type="button"
               onClick={onSubmit}
               className={`${!file && "hidden"}`}
             >
+              <FontAwesomeIcon icon={faFileArrowUp} className="mr-2" />
               Upload File
-              <FontAwesomeIcon icon={faFileArrowUp} className="ml-2" />
             </Button>
             <Button
               onClick={() => signOut()}
@@ -180,19 +192,18 @@ const Upload: React.FC = () => {
 
   async function onSubmit() {
     setUploading(true);
-    await upload(file, speaker, title, seconds, createdDate, additionalInfo);
+    await upload(
+      file,
+      speaker,
+      title,
+      (Number(minutes) * 60 + Number(seconds)).toString(),
+      createdDate,
+      additionalInfo
+    );
     window.location.href = "/";
   }
 
-  function handledragover(event: DragEvent) {
-    event.preventDefault();
-  }
-
-  function handledragleave(event: DragEvent) {
-    event.preventDefault();
-  }
-
-  function handledrop(event: DragEvent) {
+  function handleDrop(event: DragEvent) {
     event.preventDefault();
 
     // fetch the files

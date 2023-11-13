@@ -49,9 +49,9 @@ function episode(fileName: string, size: number): string {
   return `<item>
   <title>${info.cleanName}</title>
   <enclosure
-    url="https://msf-audios.nyc3.digitaloceanspaces.com/${encodeURIComponent(
-      fileName
-    )}"
+    url="https://${
+      process.env.CLOUD_STORAGE_BUCKET
+    }.nyc3.digitaloceanspaces.com/${encodeURIComponent(fileName)}"
     length="${size}"
     type="audio/mpeg"
   />
@@ -63,9 +63,9 @@ function episode(fileName: string, size: number): string {
     info.speaker
   }</itunes:subtitle>
   <description>Teaching on "${info.cleanName}" by ${info.speaker}</description>
-  <guid isPermaLink="true">https://msf-audios.nyc3.digitaloceanspaces.com/${encodeURIComponent(
-    fileName
-  )}</guid>
+  <guid isPermaLink="true">https://${
+    process.env.CLOUD_STORAGE_BUCKET
+  }.nyc3.digitaloceanspaces.com/${encodeURIComponent(fileName)}</guid>
   <pubDate>${new Date(info.createdDate).toUTCString()}</pubDate>
   <itunes:duration>${Math.round(info.lengthInSeconds)}</itunes:duration>
   <itunes:explicit>false</itunes:explicit>
