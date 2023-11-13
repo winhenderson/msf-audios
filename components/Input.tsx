@@ -25,7 +25,7 @@ const Input: React.FC<Props> = ({
         htmlFor={id}
         className="text-xs uppercase font-semibold text-teal-800"
       >
-        {children}:
+        {children}:{required && <span className="text-red-500 ml-1">*</span>}
       </label>
       <input
         autoFocus={children === "Title" && true}
