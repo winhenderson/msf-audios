@@ -10,6 +10,7 @@ import { upload } from "@/lib/utils";
 import Input from "@/components/Input";
 import { signIn, signOut, useSession } from "next-auth/react";
 import Image from "next/image";
+import cx from "classnames";
 
 const Upload: React.FC = () => {
   const today = new Date();
@@ -23,6 +24,7 @@ const Upload: React.FC = () => {
   const [title, setTitle] = useState("");
   const [additionalInfo, setAdditionalInfo] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [isDraggingOver, setIsDraggingOver] = useState(false);
 
   const { data: session } = useSession();
 
@@ -73,17 +75,21 @@ const Upload: React.FC = () => {
             e.preventDefault();
             onSubmit();
           }}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
           onDrop={handleDrop}
           className="flex flex-col items-center px-2 w-full max-w-[500px]"
         >
           <div className="flex flex-col gap-4 w-full">
             <label
               htmlFor="dropzone-file"
-              className={`flex flex-col items-center justify-center p-12 border-teal-900/25 rounded-lg cursor-pointer bg-teal-50 bg-opacity-40  text-teal-950 ${
+              className={cx(
+                `flex flex-col items-center justify-center p-12 border-teal-900/25 rounded-lg cursor-pointer bg-opacity-40 text-teal-950`,
                 file
                   ? "bg-teal-100 py-6 border-solid border"
-                  : "border-dashed border-2"
-              }`}
+                  : "border-dashed border-2",
+                isDraggingOver ? "bg-teal-200" : "bg-teal-50"
+              )}
             >
               <div className="flex flex-col items-center justify-center">
                 {!file && (
@@ -107,7 +113,7 @@ const Upload: React.FC = () => {
               id="dropzone-file"
               type="file"
               className="hidden"
-              onChange={handlefilechange}
+              onChange={handleFileChange}
               required
             />
 
@@ -191,6 +197,10 @@ const Upload: React.FC = () => {
   );
 
   async function onSubmit() {
+    if (!title || !createdDate || !minutes || !seconds || !speaker || !file) {
+      window.alert("Please fill out all required fields.");
+      return;
+    }
     setUploading(true);
     await upload(
       file,
@@ -209,9 +219,20 @@ const Upload: React.FC = () => {
     // fetch the files
     const droppedfiles = Array.from(event.dataTransfer.files);
     setFile(droppedfiles[0]);
+    setIsDraggingOver(false);
   }
 
-  function handlefilechange(e: React.ChangeEvent<HTMLInputElement>) {
+  function handleDragOver(event: DragEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    setIsDraggingOver(true);
+  }
+
+  function handleDragLeave(event: DragEvent<HTMLFormElement>): void {
+    event.preventDefault();
+    setIsDraggingOver(false);
+  }
+
+  function handleFileChange(e: React.ChangeEvent<HTMLInputElement>) {
     e.preventDefault();
     if (e.target.files && e.target.files[0]) {
       setFile(e.target.files[0]);
