@@ -58,8 +58,8 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
     month: Number(Number(createdDateDigits.splice(0, 2).join("")).toFixed(0)),
     day: Number(createdDateDigits.splice(0, 2).join("")),
   };
-  const audioName = splitByUnderscores[1].split("-").join(" ");
-  const speaker = splitByUnderscores[2].split("-").join(" ");
+  const audioName = splitByUnderscores[1].split("|").join(" ");
+  const speaker = splitByUnderscores[2].split("|").join(" ");
   const totalSeconds = Number(splitByUnderscores[3]);
   const hours = Number(Math.floor(totalSeconds / 3600).toFixed(0));
   let minutes = Math.floor((totalSeconds - hours * 60 * 60) / 60).toFixed(0);
@@ -69,7 +69,7 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
   const seconds = (totalSeconds % 60).toString().padStart(2, "0");
   const extraInfo =
     splitByUnderscores.length === 5
-      ? splitByUnderscores[4].split("-").join(" ")
+      ? splitByUnderscores[4].split("|").join(" ")
       : null;
 
   return {
@@ -131,7 +131,7 @@ export async function upload(
         .toString()
         .padStart(2, "0")}${date.getDate().toString().padStart(2, "0")}_${title
         .split(" ")
-        .join("-")}_${speaker.split(" ").join("-")}_${seconds}${
+        .join("|")}_${speaker.split(" ").join("|")}_${seconds}${
         additionalInfo !== "" ? `_${additionalInfo}` : ""
       }.mp3`
     )
