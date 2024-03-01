@@ -73,7 +73,7 @@ export function getData(fileName: string, fileSize: number): UsefulInfo {
       : null;
 
   return {
-    cleanName: audioName,
+    cleanName: decodeURI(audioName),
     fileName: fileName,
     size: fileSize,
     lengthInSeconds: totalSeconds,

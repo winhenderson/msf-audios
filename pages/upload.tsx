@@ -205,17 +205,16 @@ const Upload: React.FC = () => {
     await upload(
       file,
       speaker,
-      title,
+      title.replace(/-/g, "–"),
       (Number(minutes) * 60 + Number(seconds)).toString(),
       createdDate,
-      additionalInfo
+      additionalInfo.replace(/-/g, "–")
     );
     window.location.href = "/";
   }
 
   function handleDrop(event: DragEvent) {
     event.preventDefault();
-
     // fetch the files
     const droppedfiles = Array.from(event.dataTransfer.files);
     setFile(droppedfiles[0]);
